@@ -104,7 +104,7 @@
                     getLocation();
                 } else if (result.state === 'prompt') {
                     report(result.state);
-                    navigator.geolocation.getCurrentPosition(revealPosition, positionDenied, geoSettings);
+                    getLocation();
                 } else if (result.state === 'denied') {
                     report(result.state);
                 }
