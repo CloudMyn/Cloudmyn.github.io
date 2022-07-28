@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>.Que - Barcode Generator</title>
+    <title>.Que - GeoCamera</title>
 
     <script src="https://www.w3schools.com/lib/w3.js"></script>
 
@@ -43,13 +43,13 @@
                     </span>
                 </div>
                 <div class="navbar-bottom" x-show="isOpen" x-transition.opacity.duration.500ms>
-                    <div class="navbar-link active">
+                    <div class="navbar-link">
                         <a href="/index.html">Barcode-g</a>
                     </div>
                     <div class="navbar-link">
                         <a href="/sales-report.html">Sales report</a>
                     </div>
-                    <div class="navbar-link">
+                    <div class="navbar-link active">
                         <a href="/camera-tm.html">Geo-c</a>
                     </div>
                     <div class="navbar-link">
@@ -60,13 +60,13 @@
 
             <div class="navbar-desk">
                 <div class="navbar-menu">
-                    <div class="navbar-link active">
+                    <div class="navbar-link">
                         <a href="/index.html">Barcode-g</a>
                     </div>
                     <div class="navbar-link">
                         <a href="/sales-report.html">Sales report</a>
                     </div>
-                    <div class="navbar-link">
+                    <div class="navbar-link active">
                         <a href="/camera-tm.html">Geo-c</a>
                     </div>
                     <div class="navbar-link">
@@ -97,8 +97,45 @@
 
 
     <script>
+        function handlePermission() {
+            navigator.permissions.query({ name: 'geolocation' }).then(function (result) {
+                if (result.state === 'granted') {
+                    report(result.state);
+                    getLocation();
+                } else if (result.state === 'prompt') {
+                    report(result.state);
+                    navigator.geolocation.getCurrentPosition(revealPosition, positionDenied, geoSettings);
+                } else if (result.state === 'denied') {
+                    report(result.state);
+                }
+                result.addEventListener('change', function () {
+                    report(result.state);
+                });
+            });
+        }
 
-        generateBarcode('Selamat Datang!')
+        function report(state) {
+            document.getElementsByClassName('hero-email-input')[0].value = `Permission ${state}`;
+        }
+
+        handlePermission();
+
+
+        var x = document.getElementById("demo");
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        function showPosition(position) {
+            let x = "Latitude: " + position.coords.latitude +
+                "Longitude: " + position.coords.longitude;
+
+            document.getElementsByClassName('hero-email-input')[0].value = x;
+        }
 
     </script>
 
