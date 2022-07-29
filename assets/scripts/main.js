@@ -1,7 +1,7 @@
 const template = (data) => `
 LAPORAN SALES
 ${data['kode_toko']} ${data['date']}
-  
+ 
 Net.      : *${data['net']}*
 Struk     : *${data['struk']}*
  
@@ -86,16 +86,16 @@ const calculate = _ => {
     let std_gr = document.getElementById('std-gr');
     let apc = document.getElementById('apc');
     let apc_gr = document.getElementById('apc-gr');
-    
+
     let akm_sales_el = document.getElementById('new-akm-sales');
     let akm_struk_el = document.getElementById('new-akm-struk');
 
     let data = {};
-    
+
     let arrbulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-    
+
     let date = new Date();
-    
+
     let tgl = parseInt(document.getElementById('tgl').value);
 
     let akm_sales = parseNum(net_sales) + parseNum(_akm_sales);
@@ -112,7 +112,7 @@ const calculate = _ => {
     data['spd_sk'] = parseInt(akm_sales / tgl);
     data['spd_bl'] = spd_bl;
     data['spd_gr'] = data['spd_sk'] / parseNum(spd_bl) * 100 - 100;
-    
+
     data['spd_gr'] = data['spd_gr'] < 0
         ? parseInt(data['spd_gr']).toString()
         : '+' + parseInt(data['spd_gr']).toString()
@@ -128,7 +128,7 @@ const calculate = _ => {
     data['apc_sk'] = parseInt(data['spd_sk'] / data['std_sk']);
     data['apc_bl'] = apc_bl;
     data['apc_gr'] = data['apc_sk'] / parseNum(apc_bl) * 100 - 100;
-    
+
     data['apc_gr'] = data['apc_gr'] < 0
         ? parseInt(data['apc_gr']).toString()
         : '+' + parseInt(data['apc_gr']).toString()
@@ -139,7 +139,19 @@ const calculate = _ => {
     akm_struk_el.parentElement.removeAttribute('hidden');
 
     navigator.clipboard.writeText(report)
-    
+
+    Swal.fire({
+        title: `<strong>LAPORAN SALES ${kode_toko}</strong>`,
+        icon: 'success',
+        html: `<div id="swal-body-c"><pre>${report}</pre></div>`,
+        showCloseButton: true,
+        focusConfirm: false,
+        confirmButtonText:
+            'Salin',
+        cancelButtonText:
+            'Tutup',
+    })
+
 };
 
 
@@ -155,7 +167,7 @@ function parseNum(str) {
 async function getAddress(lat, lon) {
     // https://nominatim.openstreetmap.org/reverse?format=xml&lat=0.6426663&lon=122.8621346
     let url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
-     console.log(url);
+    console.log(url);
     let data = await fetch(url);
     console.log(await data.text());
 }

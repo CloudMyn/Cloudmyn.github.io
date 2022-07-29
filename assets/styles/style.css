@@ -6,6 +6,13 @@ input[type="text"]:disabled {
   background: #f0f0f08c !important;
 }
 
+#swal-body-c {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: left;
+}
+
 .pbox {
   width: 100%;
   height: 90%;
