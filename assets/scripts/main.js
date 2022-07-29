@@ -138,10 +138,7 @@ const calculate = _ => {
     akm_sales_el.parentElement.removeAttribute('hidden');
     akm_struk_el.parentElement.removeAttribute('hidden');
 
-    alert(report);
-
     navigator.clipboard.writeText(report)
-
     
 };
 
