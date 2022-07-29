@@ -52,7 +52,7 @@
                         <a href="/sales-report.html">Sales report</a>
                     </div>
                     <div class="navbar-link">
-                        <a href="#">Geo-c</a>
+                        <a href="/camera-tm.html">Geo-c</a>
                     </div>
                     <div class="navbar-link">
                         <a href="#">Grid</a>
@@ -69,7 +69,7 @@
                         <a href="/sales-report.html">Sales report</a>
                     </div>
                     <div class="navbar-link">
-                        <a href="#">Geo-c</a>
+                        <a href="/camera-tm.html">Geo-c</a>
                     </div>
                     <div class="navbar-link">
                         <a href="#">Grid</a>
@@ -88,6 +88,10 @@
                 <h3>Sales Report</h3>
                 <h4>Untuk laporan sales harian karyawan indomaret.</h4>
                 <fieldset>
+                    <label for="tgl">Tanggal</label>
+                    <input id="tgl" placeholder="Tanggal" type="text" tabindex="1" required maxlength="10" value="">
+                </fieldset>
+                <fieldset>
                     <label for="kd-toko">Kode toko</label>
                     <input id="kd-toko" placeholder="Kode Toko ex: 'TRKC'" type="text" tabindex="1" required
                         maxlength="10" value="TRKC">
@@ -95,37 +99,69 @@
                 <fieldset>
                     <label for="net-sales">Net Sales</label>
                     <input id="net-sales" placeholder="Net Sales" type="text" oninput="onlyNumber(this)" maxlength="50"
-                        tabindex="2" required value="">
+                        tabindex="2" required value="12.719.057">
+                </fieldset>
+                <fieldset hidden="true">
+                    <label for="new-akm-sales">AKM Net Sales</label>
+                    <input id="new-akm-sales" placeholder="AKM Net Sales terbaru" type="text" disabled>
                 </fieldset>
                 <fieldset>
-                    <label for="akm-sales">AKM Net Sales</label>
+                    <label for="akm-sales">~ AKM Net Sales</label>
                     <input id="akm-sales" placeholder="AKM Net Sales" type="text" oninput="onlyNumber(this)"
-                        maxlength="50" tabindex="2" required value="">
+                        maxlength="50" tabindex="2" required value="325.910.914">
                 </fieldset>
                 <fieldset>
                     <label for="struk">Struk</label>
                     <input id="struk" placeholder="Struk" type="text" oninput="onlyNumber(this)" maxlength="50"
-                        tabindex="3" required value="">
+                        tabindex="3" required value="369">
+                </fieldset>
+                <fieldset hidden="true">
+                    <label for="new-akm-struk">AKM Struk</label>
+                    <input id="new-akm-struk" placeholder="AKM Struk terbaru" type="text" disabled>
                 </fieldset>
                 <fieldset>
-                    <label for="akm-struk">AKM Struk</label>
+                    <label for="akm-struk">~ AKM Struk</label>
                     <input id="akm-struk" placeholder="AKM Struk" type="text" oninput="onlyNumber(this)" maxlength="50"
-                        tabindex="3" required value="">
+                        tabindex="3" required value="9.939">
+                </fieldset>
+                <fieldset hidden=true>
+                    <label  for="spd">SPD</label>
+                    <input id="spd" placeholder="SPD" type="text" disabled>
                 </fieldset>
                 <fieldset>
                     <label for="spd-bl">SPD bulan lalu</label>
                     <input id="spd-bl" placeholder="SPD Bulan Lalu" type="text" oninput="onlyNumber(this)"
-                        maxlength="50" tabindex="3" required value="">
+                        maxlength="50" tabindex="3" required value="11.121.073">
+                </fieldset>
+                <fieldset hidden=true>
+                    <label for="spd-gr">SPD Growth</label>
+                    <input id="spd-gr" placeholder="SPD Growth" type="text" disabled>
                 </fieldset>
                 <fieldset>
+                    <fieldset hidden=true>
+                        <label  for="std">STD</label>
+                        <input id="std" placeholder="STD" type="text" disabled>
+                    </fieldset>
                     <label for="std-bl">STD bulan lalu</label>
                     <input id="std-bl" placeholder="STD Bulan Lalu" type="text" oninput="onlyNumber(this)"
-                        maxlength="50" tabindex="3" required value="">
+                        maxlength="50" tabindex="3" required value="361">
+                </fieldset>
+                <fieldset hidden=true>
+                    <label  for="std-gr">STD Growth</label>
+                    <input id="std-gr" placeholder="STD Growth" type="text" disabled>
+                </fieldset>
+                <fieldset hidden=true>
+                    <label  for="apc">APC</label>
+                    <input id="apc" placeholder="apc" type="text" disabled>
                 </fieldset>
                 <fieldset>
                     <label for="apc-bl">APC bulan lalu</label>
                     <input id="apc-bl" placeholder="APC Bulan Lalu" type="text" oninput="onlyNumber(this)"
-                        maxlength="50" tabindex="3" required value="">
+                        maxlength="50" tabindex="3" required value="30.806">
+                </fieldset>
+                <fieldset hidden=true>
+                    <label  for="apc-gr">APC Growth</label>
+                    <input id="apc-gr" placeholder="APC Growth" type="text" disabled>
                 </fieldset>
                 <fieldset style="margin-top: 10px;">
                     <button name="submit" type="submit" id="contact-submit" onclick="calculate()">Hitung</button>
@@ -137,6 +173,10 @@
         </div>
 
     </div>
+
+    <script>
+        document.getElementById('tgl').value = (new Date).getDate();
+    </script>
 
 
 

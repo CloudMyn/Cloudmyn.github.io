@@ -2,6 +2,10 @@ body {
   background-color: var(--body);
 }
 
+input[type="text"]:disabled {
+  background: #f0f0f08c !important;
+}
+
 .pbox {
   width: 100%;
   height: 90%;
@@ -188,8 +192,6 @@ body {
     margin-top: 0;
   }
 }
-
-
 
 .box-content {
   position: relative;

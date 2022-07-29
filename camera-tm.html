@@ -21,8 +21,11 @@
     <link rel="stylesheet" href="/assets/styles/color-dark.css">
 
     <link rel="stylesheet" href="/assets/styles/style.css">
+
     <script src="/assets/scripts/bc.js"></script>
     <script src="/assets/scripts/main.js"></script>
+
+
 </head>
 
 <body>
@@ -95,6 +98,9 @@
 
     </div>
 
+    <div id="result"></div>
+
+    <div id="map"></div>
 
     <script>
         function handlePermission() {
@@ -135,6 +141,9 @@
                 "Longitude: " + position.coords.longitude;
 
             document.getElementsByClassName('hero-email-input')[0].value = x;
+
+            getAddress(position.coords.latitude, position.coords.longitude);
+
         }
 
     </script>

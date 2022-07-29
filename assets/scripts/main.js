@@ -80,17 +80,29 @@ const calculate = _ => {
     let std_bl = document.getElementById('std-bl').value.toString().replace(',', '');
     let apc_bl = document.getElementById('apc-bl').value.toString().replace(',', '');
 
+    let spd = document.getElementById('spd');
+    let spd_gr = document.getElementById('spd-gr');
+    let std = document.getElementById('std');
+    let std_gr = document.getElementById('std-gr');
+    let apc = document.getElementById('apc');
+    let apc_gr = document.getElementById('apc-gr');
+    
+    let akm_sales_el = document.getElementById('new-akm-sales');
+    let akm_struk_el = document.getElementById('new-akm-struk');
+
     let data = {};
     
     let arrbulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
     
     let date = new Date();
     
-    let tgl = parseInt(date.getDate());
+    let tgl = parseInt(document.getElementById('tgl').value);
 
     let akm_sales = parseNum(net_sales) + parseNum(_akm_sales);
     let akm_struk = parseNum(struk) + parseNum(_akm_struk);
-    console.log(akm_sales, akm_struk);
+
+    akm_sales_el.value = formatNumber(akm_sales);
+    akm_struk_el.value = formatNumber(akm_struk);
 
     data['kode_toko'] = kode_toko;
     data['date'] = `${date.getDate()} ${arrbulan[date.getMonth()]} ${date.getFullYear()}`;
@@ -121,9 +133,16 @@ const calculate = _ => {
         ? parseInt(data['apc_gr']).toString()
         : '+' + parseInt(data['apc_gr']).toString()
 
-    console.log(data, parseNum(apc_bl));
-    console.log(template(data));
+    const report = template(data);
 
+    akm_sales_el.parentElement.removeAttribute('hidden');
+    akm_struk_el.parentElement.removeAttribute('hidden');
+
+    alert(report);
+
+    navigator.clipboard.writeText(report)
+
+    
 };
 
 
@@ -133,4 +152,13 @@ function formatNumber(number) {
 
 function parseNum(str) {
     return parseInt(str.replaceAll('.', ''));
+}
+
+
+async function getAddress(lat, lon) {
+    // https://nominatim.openstreetmap.org/reverse?format=xml&lat=0.6426663&lon=122.8621346
+    let url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+     console.log(url);
+    let data = await fetch(url);
+    console.log(await data.text());
 }
