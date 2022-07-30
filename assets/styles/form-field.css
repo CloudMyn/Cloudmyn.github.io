@@ -24,7 +24,7 @@
 
 #contact {
   position: relative;
-  background: var(--text-secondary-color);
+  background: var(--card-secondary);
   width: 100%;
   padding: 25px;
   margin: 10px 0;
@@ -40,6 +40,7 @@
 }
 
 #contact h3 {
+  color: var(--card-secondart-text);
   display: block;
   font-size: 30px;
   font-weight: 300;
@@ -47,7 +48,7 @@
 }
 
 #contact h4 {
-  color: rgb(126, 126, 126);
+  color: var(--card-secondart-text2);
   margin: 5px 0 15px;
   display: block;
   font-size: 13px;
@@ -67,7 +68,7 @@ fieldset label {
   padding: 0;
   font-size: 14px;
   font-weight: 600;
-  color: var(--card-bg-color);
+  color: var(--card-secondart-text);
   text-transform: uppercase;
 }
 

@@ -72,10 +72,9 @@ input[type="text"]:disabled {
   position: relative;
   width: 100%;
   margin: 3px 0;
-  padding: 5px 0;
+  padding: 5px 8px;
   transition: all 0.3ss;
   border-radius: 5px;
-  color: var(--text-primary-color);
 }
 
 .navbar-link a {
@@ -128,8 +127,7 @@ input[type="text"]:disabled {
 }
 
 .navbar-link.active {
-  background-color: #9496ff;
-  color: #ffffffec;
+  background-color: var(--navbar-menu-link-active);
 }
 
 .navbar-menu .navbar-link:hover {
@@ -137,7 +135,14 @@ input[type="text"]:disabled {
   color: #ffffff;
 }
 
-.navbar-menu .navbar-link a {
+.navbar-link.active a {
+  position: relative;
+  display: inline-block;
+  color: white;
+  width: 100%;
+}
+
+.navbar-link a {
   position: relative;
   display: inline-block;
   width: 100%;
@@ -187,8 +192,8 @@ input[type="text"]:disabled {
 }
 
 .hero-form-submit {
-  background-color: var(--card-bg-color);
-  color: var(--text-secondary-color);
+  background-color: var(--btn-main-color);
+  color: white;
   border: none;
   padding: 5px 2rem;
   margin-top: 0.5rem;
