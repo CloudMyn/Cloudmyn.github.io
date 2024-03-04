@@ -233,7 +233,7 @@ function format_money(inputValue) {
 
 function unformat_money(formattedValue) {
     // Remove non-numeric characters including commas and currency symbol
-    var unformattedValue = formattedValue.toString().replace(/[^\d.-]/g, '');
+    var unformattedValue = formattedValue.toString().replace(/\D/g, '');
 
     // Convert the formatted string back to a number
     return parseInt(unformattedValue);
