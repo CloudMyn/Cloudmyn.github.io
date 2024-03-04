@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aplikasi Toko - Tabel Barang</title>
+
+
+    <script src="/assets/javascripts/main.js"></script>
+
+    <!-- izitoast -->
+    <link rel="stylesheet" href="/assets/iziToast-master/dist/css/iziToast.min.css">
+    <script src="/assets/iziToast-master/dist/js/iziToast.min.js"></script>
+
+    <!-- bootsrap -->
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="/assets/styles/style.css">
+    <script src="/assets/javascripts/app.js"></script>
+
+    <script src="/assets/javascripts/jquery.min.js"></script>
+
+    <!-- data tables -->
+    <link rel="stylesheet" href="/assets/data-tables/datatables.min.css">
+    <script src="/assets/data-tables/datatables.min.js"></script>
+
+    <!-- data tables plus bootsrap -->
+    <link rel="stylesheet" href="/assets/data-tables/DataTables-2.0.0/css/dataTables.bootstrap5.min.css">
+    <script src="/assets/data-tables/DataTables-2.0.0/js/dataTables.bootstrap5.min.js"></script>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">Tokoku</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+                aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/">Halaman Utama</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/penjualan.html">Penjualan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active " aria-current="page" href="/daftar_barang.html">Daftar Barang</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/pengaturan.html">Pengaturan</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="container px-3 py-4">
+
+        <div class="row justify-content-between mb-3">
+
+            <div class="col-12 col-md-9 col-lg-10">
+                <h3 class="text-light-emphasis"> Tabel Barang</h3>
+            </div>
+
+            <div class="col-12 col-md-3 col-lg-2" style="text-align: right;">
+                <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal"
+                    data-bs-target="#tambahRecord">Tambah Barang</button>
+            </div>
+
+        </div>
+
+        <div class="table-responsive">
+
+
+            <table id="tabel_daftar_barang" class="table table-striped overflow-hidden">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nama</th>
+                        <th>Deskripsi</th>
+                        <th style="max-width: 20px;">Stock</th>
+                        <th>Harga Jual</th>
+                        <th>Harga Beli</th>
+                        <th>Tgl Update</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+            </table>
+
+
+            <!-- Modal Update -->
+            <div class="modal fade" id="editRecord" tabindex="-1" aria-labelledby="editRecordLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="editRecordLabel">Data Barang</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3 d-none">
+                                <input autocomplete="off" id="id_barang" type="hidden">
+                            </div>
+                            <div class="mb-3">
+                                <label for="_nama_barang_field" class="form-label">Nama Barang</label>
+                                <input autocomplete="off" type="text" class="form-control error-field"
+                                    id="_nama_barang_field" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="_deskripsi_barang_field" class="form-label">Deskrpisi Barang</label>
+                                <textarea class="form-control" id="_deskripsi_barang_field" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="_harga_beli_barang_field" class="form-label">Harga Beli Barang</label>
+                                <input autocomplete="off" type="text" class="form-control" id="_harga_beli_barang_field"
+                                    oninput="number_field(this)" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="_harga_jual_barang_field" class="form-label">Harga Jual Barang</label>
+                                <input autocomplete="off" type="text" class="form-control" id="_harga_jual_barang_field"
+                                    oninput="number_field(this)" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="_stock_barang_field" class="form-label">Stock Barang</label>
+                                <input autocomplete="off" type="number" class="form-control" id="_stock_barang_field"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                            <a href="#" id="btn-link-laporan-barang" type="button" class="btn btn-warning" target="_blank_">Laporan</a>
+                            <button type="button" class="btn btn-danger" onclick="delete_record_by_id()">Hapus</button>
+                            <button type="button" class="btn btn-success"
+                                onclick="simpan_data_barang_yang_sudah_di_edit()">Update</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Modal Update -->
+
+
+            <!-- Modal Tambah -->
+            <div class="modal fade" id="tambahRecord" tabindex="-1" aria-labelledby="tambahRecordLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="tambahRecordLabel">Tambah Data Barang</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="nama_barang_field" class="form-label">Nama Barang</label>
+                                <input autocomplete="off" type="text" class="form-control error-field"
+                                    id="nama_barang_field" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="deskripsi_barang_field" class="form-label">Deskrpisi Barang</label>
+                                <textarea class="form-control" id="deskripsi_barang_field" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="harga_beli_barang_field" class="form-label">Harga Beli Barang</label>
+                                <input autocomplete="off" type="text" class="form-control" id="harga_beli_barang_field"
+                                    oninput="number_field(this)" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="harga_jual_barang_field" class="form-label">Harga Jual Barang</label>
+                                <input autocomplete="off" type="text" class="form-control" id="harga_jual_barang_field"
+                                    oninput="number_field(this)" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="stock_barang_field" class="form-label">Stock Barang</label>
+                                <input autocomplete="off" type="number" class="form-control" id="stock_barang_field"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                            <button type="button" class="btn btn-primary" onclick="tambah_data_barang_baru()"
+                                data-bs-dismiss="modal">Simpan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Modal Tambah -->
+
+        </div>
+
+
+    </div>
+
+
+    <!-- Boostrap -->
+    <script src="/assets/javascripts/popper.min.js"></script>
+    <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+
+    <script>
+
+        const edit_modal = new bootstrap.Modal('#editRecord');
+
+        tampilkan_tabel_barang();
+
+        function tampilkan_dialog_edit_barang(id_barang) {
+
+            const id_barang_field = document.getElementById('id_barang');
+            const nama_barang_field = document.getElementById('_nama_barang_field');
+            const deskripsi_barang_field = document.getElementById('_deskripsi_barang_field');
+            const harga_jual_barang_field = document.getElementById('_harga_jual_barang_field');
+            const harga_beli_barang_field = document.getElementById('_harga_beli_barang_field');
+            const stock_barang_field = document.getElementById('_stock_barang_field');
+
+            const btn_laporan = document.getElementById('btn-link-laporan-barang');
+
+            let record = tabel_barang.get_record_by_id(id_barang);
+
+            if (!record) {
+                return alert(`Barang dengan id ${id_barang} tidak ditemukan!`);
+            }
+
+            id_barang_field.value = record['id'];
+            nama_barang_field.value = record['nama'];
+            deskripsi_barang_field.value = record['deskripsi'];
+            harga_jual_barang_field.value = format_money(record['harga_jual']);
+            harga_beli_barang_field.value = format_money(record['harga_beli']);
+            stock_barang_field.value = record['stock'];
+
+            btn_laporan.href = '/reporting/template_laporan_per_barang.html?id_barang=' + id_barang;
+
+            edit_modal.show();
+        }
+
+
+        function tambah_data_barang_baru() {
+
+            const id_barang_field = document.getElementById('id_barang');
+            const nama_barang_field = document.getElementById('nama_barang_field');
+            const deskripsi_barang_field = document.getElementById('deskripsi_barang_field');
+            const harga_jual_barang_field = document.getElementById('harga_jual_barang_field');
+            const harga_beli_barang_field = document.getElementById('harga_beli_barang_field');
+            const stock_barang_field = document.getElementById('stock_barang_field');
+
+
+            if (
+                !validateNamaBarang(nama_barang_field.value) ||
+                !validateHargaJualBarang(harga_jual_barang_field.value) ||
+                !validateHargaBeliBarang(harga_beli_barang_field.value) ||
+                !validateDeskripsiBarang(deskripsi_barang_field.value) ||
+                !validateStockBarang(stock_barang_field.value)
+            ) {
+                return;
+            }
+
+            tabel_barang.add_record({
+                nama: nama_barang_field.value,
+                stock: stock_barang_field.value,
+                harga_jual: unformat_money(harga_jual_barang_field.value),
+                harga_beli: unformat_money(harga_beli_barang_field.value),
+                deskripsi: deskripsi_barang_field.value,
+            });
+
+            edit_modal.hide();
+
+            iziToast.success({
+                title: 'Berhasil',
+                message: 'Barang (' + nama_barang_field.value + ') berhasil di tambahkan'
+            });
+
+            nama_barang_field.value = '';
+            deskripsi_barang_field.value = '';
+            harga_jual_barang_field.value = '';
+            harga_beli_barang_field.value = '';
+            stock_barang_field.value = '';
+
+            tampilkan_tabel_barang();
+
+        }
+
+        function simpan_data_barang_yang_sudah_di_edit() {
+
+            const id_barang_field = document.getElementById('id_barang');
+            const nama_barang_field = document.getElementById('_nama_barang_field');
+            const deskripsi_barang_field = document.getElementById('_deskripsi_barang_field');
+            const harga_jual_barang_field = document.getElementById('_harga_jual_barang_field');
+            const harga_beli_barang_field = document.getElementById('_harga_beli_barang_field');
+            const stock_barang_field = document.getElementById('_stock_barang_field');
+
+
+            let barang_id = id_barang_field.value;
+
+            if (!barang_id) {
+                return iziToast.error({
+                    title: 'Gagal',
+                    message: 'Id barang tidak ditemukan, harap refresh halaman!'
+                });
+            }
+
+            if (
+                !validateNamaBarang(nama_barang_field.value) ||
+                !validateHargaJualBarang(harga_jual_barang_field.value) ||
+                !validateHargaBeliBarang(harga_beli_barang_field.value) ||
+                !validateDeskripsiBarang(deskripsi_barang_field.value) ||
+                !validateStockBarang(stock_barang_field.value)
+            ) {
+                return;
+            }
+
+            tabel_barang.update_record(barang_id, {
+                nama: nama_barang_field.value,
+                stock: stock_barang_field.value,
+                harga_beli: unformat_money(harga_beli_barang_field.value),
+                harga_jual: unformat_money(harga_jual_barang_field.value),
+                deskripsi: deskripsi_barang_field.value,
+            });
+
+            edit_modal.hide();
+
+            iziToast.success({
+                title: 'Berhasil',
+                message: 'Barang dengan id (' + barang_id + ') berhasil di update'
+            });
+
+            tampilkan_tabel_barang();
+
+        }
+
+        function tampilkan_tabel_barang() {
+
+            let dataSet = tabel_barang.get_records();
+
+            $('#tabel_daftar_barang').DataTable().destroy();
+
+            $('#tabel_daftar_barang colgroup').remove();
+
+            $('#tabel_daftar_barang').DataTable({
+                columns: [
+                    { titile: 'id', data: 'id' },
+                    {
+                        titile: 'Nama',
+                        data: 'nama',
+                        render: function (data, type, row) {
+                            if (type === 'display' && data.length > 30) {
+                                return data.substr(0, 15) + '...';
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        titile: 'Deskripsi',
+                        data: 'deskripsi',
+                        render: function (data, type, row) {
+                            if (type === 'display' && data.length > 30) {
+                                return data.substr(0, 25) + '...';
+                            }
+                            return data;
+                        }
+                    },
+                    { titile: 'Stock', data: 'stock' },
+                    { titile: 'Harga Jual', data: 'harga_jual' },
+                    { titile: 'Harga Beli', data: 'harga_beli' },
+                    {
+                        titile: 'Tanggal Update',
+                        data: 'tgl_update',
+                        render: function (dateString, typr, row) {
+                            var parts = dateString.split(' '); // Memisahkan string menjadi bagian-bagian berdasarkan spasi
+
+                            // Bagian pertama adalah hari dalam seminggu, bagian kedua adalah tanggal, bagian ketiga adalah bulan
+                            var dayOfWeek = parts[0];
+                            var date = parts[1];
+                            var month = parts[2];
+                            var year = parts[3];
+
+                            // Menggabungkan kembali tanggal, bulan, dan tahun
+                            return date + ' ' + month + ' ' + year;
+                        }
+                    },
+                    { // Kolom Action
+                        data: null,
+                        render: function (data, type, row) {
+                            return '<button class="btn btn-sm btn-primary" type="button" onclick="tampilkan_dialog_edit_barang(' + row['id'] + ')">Tampilkan</button>';
+                        }
+                    }
+                ],
+                data: dataSet,
+                responsive: true,
+                columnDefs: [
+                    {
+                        targets: 0,
+                        responsivePriority: 10,
+                    },
+                    {
+                        targets: 1,
+                        responsivePriority: 0,
+                    },
+                    {
+                        targets: 2,
+                        responsivePriority: 11,
+                    },
+                    {
+                        targets: 3,
+                        responsivePriority: 3,
+                        render: function (data, type, row) {
+                            return data + ' pcs';
+                        }
+                    },
+                    {
+                        targets: 4,
+                        responsivePriority: 9,
+                        render: function (data, type, row) {
+                            return format_money(data.toString());
+                        }
+                    },
+                    {
+                        targets: 5,
+                        responsivePriority: 12,
+                        visible: false, // Mengatur agar kolom tidak terlihat
+                        searchable: false,
+                        render: function (data, type, row) {
+                            return format_money(data.toString());
+                        }
+                    },
+                    {
+                        targets: 5,
+                        responsivePriority: 13,
+                    },
+                    {
+                        targets: 6,
+                        responsivePriority: 12,
+                    },
+                ]
+            });
+
+
+        };
+
+        function delete_record_by_id() {
+
+            const id_barang_field = document.getElementById('id_barang');
+
+            let barang = tabel_barang.get_record_by_id(id_barang_field.value);
+
+            let id = barang['id'];
+
+            let result = confirm(`Apakah anda yakin ingin menghapus barang dengan id ${id}`);
+
+            if (!result) return iziToast.error({
+                title: 'Gagal',
+                message: 'Barang dengan id (' + id + ') tidak jadi di hapus'
+            });
+
+            tabel_barang.remove_record(id);
+
+            // hapus data penjualan barang
+
+            let recors = tabel_penjualan_barang.get_record_by('id_barang', id);
+
+            for(let i in recors) {
+                let record = recors[i];
+
+                tabel_penjualan_barang.remove_record(record['id']);
+            }
+
+            iziToast.success({
+                title: 'Berhasil',
+                message: 'Barang dengan id (' + id + ') berhasil di hapus'
+            });
+            
+            iziToast.success({
+                title: 'Berhasil',
+                message: recors.length + ' Data Penjualan Barang Berhasil Dihapus'
+            });
+
+            edit_modal.hide();
+
+            tampilkan_tabel_barang();
+        }
+
+
+        // Function to validate nama barang field
+        function validateNamaBarang(value) {
+            value = value.trim();
+            if (value.length < 3 || value.length > 180) {
+                alert('Nama Barang harus memiliki panjang antara 3 dan 180 karakter.');
+                return false;
+            }
+            return true;
+        }
+
+        // Function to validate deskripsi barang field
+        function validateDeskripsiBarang(value) {
+            value = value.trim();
+            if (value.length < 3 || value.length > 450) {
+                alert('Deskripsi Barang harus memiliki panjang antara 3 dan 450 karakter.');
+                return false;
+            }
+            return true;
+        }
+
+        // Function to validate harga barang field
+        function validateHargaJualBarang(value) {
+            value = value.trim();
+            // Remove currency formatting before validation
+            const numericValue = parseInt(value.replace("Rp ", "").replace(/,/g, ""));
+            if (isNaN(numericValue) || numericValue < 0) {
+                alert('Harga Jual Barang harus berformat "Rp 0" atau lebih.');
+                return false;
+            }
+
+            console.log(numericValue, format_money(numericValue), value);
+
+            if (isNaN(numericValue) || numericValue > 90000000) {
+                alert('Harga Jual Barang melebihi jumlah yang ditentukan "' + format_money(90000000) + '"".');
+                return false;
+            }
+
+            return true;
+        }
+
+
+        // Function to validate harga beli barang field
+        function validateHargaBeliBarang(value) {
+            value = value.trim();
+            // Remove currency formatting before validation
+            const numericValue = parseInt(value.replace("Rp ", "").replace(/,/g, ""));
+            if (isNaN(numericValue) || numericValue < 0) {
+                alert('Harga Beli Barang harus berformat "Rp 0" atau lebih.');
+                return false;
+            }
+
+            console.log(numericValue, format_money(numericValue), value);
+
+            if (isNaN(numericValue) || numericValue > 90000000) {
+                alert('Harga Beli Barang melebihi jumlah yang ditentukan "' + format_money(90000000) + '"".');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Function to validate stock barang field
+        function validateStockBarang(value) {
+            value = value.trim();
+            if (!Number.isInteger(Number(value))) {
+                alert('Stock Barang harus berupa bilangan bulat.');
+                return false;
+            }
+            return true;
+        }
+
+
+    </script>
+
+</body>
+
+</html>

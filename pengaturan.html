@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aplikasi Toko - Daftar Penjualan</title>
+
+
+    <script src="/assets/javascripts/main.js"></script>
+
+    <!-- izitoast -->
+    <link rel="stylesheet" href="/assets/iziToast-master/dist/css/iziToast.min.css">
+    <script src="/assets/iziToast-master/dist/js/iziToast.min.js"></script>
+
+    <!-- bootsrap -->
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="/assets/styles/style.css">
+    <script src="/assets/javascripts/app.js"></script>
+
+    <script src="/assets/javascripts/jquery.min.js"></script>
+
+    <!-- data tables -->
+    <link rel="stylesheet" href="/assets/data-tables/datatables.min.css">
+    <script src="/assets/data-tables/datatables.min.js"></script>
+
+    <!-- data tables plus bootsrap -->
+    <link rel="stylesheet" href="/assets/data-tables/DataTables-2.0.0/css/dataTables.bootstrap5.min.css">
+    <script src="/assets/data-tables/DataTables-2.0.0/js/dataTables.bootstrap5.min.js"></script>
+
+    <style>
+        #lc_progressbar div {
+            transition: all .3s ease-in-out;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">Tokoku</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/">Halaman Utama</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/penjualan.html">Penjualan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " aria-current="page" href="/daftar_barang.html">Daftar Barang</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/pengaturan.html">Pengaturan</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="container px-3 py-4">
+
+        <div class="row justify-content-between mb-3">
+
+            <div class="co-12 col-md-9 col-lg-10">
+                <h3 class="text-light-emphasis">Halaman Pengaturan</h3>
+            </div>
+
+            <div class="col-12 col-md-3 col-lg-2" style="text-align: right;">
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col-12">
+
+                <ol class="list-group">
+                    <li class="list-group-item ms-z">
+                        <div class="row justify-content-between align-items-center py-2">
+                            <div class="col-12 col-md-9 col-lg-9">
+                                <div class="fw-bold">Penggunaan Penyimpanan Lokal</div>
+                                <div class="progress mt-2 w-100" role="progressbar" aria-label="Warning example"
+                                    aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="lc_progressbar">
+                                    <div class="progress-bar text-bg-warning" style="width: 0%">0%</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-3 col-lg-3 mt-2 mt-md-0" style="text-align: right;">
+                                <span class="badge text-bg-primary rounded-pill" id="localstorage_usage">-</span>
+                                <span class="badge text-bg-danger rounded-pill ms-2" id="localstorage_max">-</span>
+                            </div>
+                        </div>
+                    </li>
+
+
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-dark-subtle">
+                        <div class="ms-2">
+                            <h5 class="fw-bold">Pengatural Tabel Barang</h5>
+                        </div>
+                    </li>
+
+                    <li class="list-group-item ms-z">
+                        <div class="row justify-content-between align-items-center">
+                            <div class="col-12 col-md-9 col-lg-9 ms-2">
+                                <div class="fw-bold">Hapus Tabel <strong>(tabel_barang)</strong> </div>
+                                akan menghapus semua data di tabel terkait
+                            </div>
+                            <div class="col-12 col-md-3 col-lg-2" style="text-align: end;">
+                                <button class="btn btn-sm btn-outline-danger me-2" onclick="hapus_tabel('tabel_barang')">Drop
+                                    Tabel</button>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="list-group-item">
+                        <div class="row justify-content-between align-items-center">
+                            <div class="col-12 col-md-9 col-lg-9 ms-2 ms-2">
+                                <div class="fw-bold">Membuat Tabel <strong>(tabel_barang)</strong> </div>
+                                akan membuat table di dalam database (jika table sudah ada maka tdk akan dibuat)
+                            </div>
+                            <div class="col-12 col-md-3 col-lg-2" style="text-align: end;">
+                                <button class="btn btn-sm btn-outline-success" onclick="create_table('tabel_barang')">Create
+                                    Table</button>
+                            </div>
+                        </div>
+                    </li>
+                    
+                    
+                    <li class="list-group-item">
+                        <div class="row justify-content-between align-items-center">
+                            <div class="col-12 col-md-9 col-lg-9 ms-2 ms-2">
+                                <div class="fw-bold">Fake Data <strong>(tabel_barang)</strong> </div>
+                                Membuat contoh data di tabel barang
+                            </div>
+                            <div class="col-12 col-md-3 col-lg-2" style="text-align: end;">
+                                <button class="btn btn-sm btn-outline-warning" onclick="__fake_data_barang()">Generate</button>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-dark-subtle">
+                        <div class="ms-2">
+                            <h5 class="fw-bold">Pengatural Tabel Penjualan Barang</h5>
+                        </div>
+                    </li>
+
+                    <li class="list-group-item ms-z">
+                        <div class="row justify-content-between align-items-center">
+                            <div class="col-12 col-md-9 col-lg-9 ms-2">
+                                <div class="fw-bold">Hapus Tabel <strong>(tabel_penjualan_barang)</strong> </div>
+                                akan menghapus semua data di tabel terkait
+                            </div>
+                            <div class="col-12 col-md-3 col-lg-2" style="text-align: end;">
+                                <button class="btn btn-sm btn-outline-danger me-2"
+                                    onclick="hapus_tabel('tabel_penjualan_barang')">Drop
+                                    Tabel</button>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="list-group-item">
+                        <div class="row justify-content-between align-items-center">
+                            <div class="col-12 col-md-9 col-lg-9 ms-2 ms-2">
+                                <div class="fw-bold">Membuat Tabel <strong>(tabel_punjualan_barang)</strong> </div>
+                                akan membuat table di dalam database (jika table sudah ada maka tdk akan dibuat)
+                            </div>
+                            <div class="col-12 col-md-3 col-lg-2" style="text-align: end;">
+                                <button class="btn btn-sm btn-outline-success" onclick="create_table('tabel_punjualan_barang')">Create
+                                    Table</button>
+                            </div>
+                        </div>
+                    </li>
+
+                </ol>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <script>
+        let localstorage_max_size = localStorage.getItem('localstorage_max_size');
+
+        if (!localstorage_max_size) {
+            localstorage_max_size = estimateLocalStorageCapacity()['kilobytes'];
+            localStorage.setItem('localstorage_max_size', localstorage_max_size);
+        }
+
+        document.getElementById('localstorage_usage').innerHTML = (getLocalStorageSize() / 1024).toFixed(2) + ' MB';
+
+
+        document.getElementById('localstorage_max').innerHTML = (localstorage_max_size / 1024).toFixed(2) + ' MB';
+
+
+        function estimateLocalStorageCapacity() {
+            var testKey = 'test';
+            var totalBytes = 0;
+            var totalItems = 0;
+
+            // Membuat data yang cukup besar untuk digunakan dalam pengujian
+            var data = 'a';
+            while (data.length < 1024) { // 1 KB
+                data += data;
+            }
+
+            // Menyimpan data ke local storage sampai kapasitas tercapai
+            try {
+
+                while (true) {
+                    var key = testKey + totalItems;
+                    localStorage.setItem(key, data);
+                    totalItems++;
+                    totalBytes += (key.length + data.length) * 2; // Asumsi setiap karakter menggunakan 2 byte
+                }
+
+            } catch (e) {
+                // Kapasitas local storage telah tercapai
+                // Menghapus semua data yang telah ditambahkan sebelumnya
+                for (var i = 0; i < totalItems; i++) {
+                    var keyToRemove = testKey + i;
+                    localStorage.removeItem(keyToRemove);
+                }
+
+                // Mengembalikan perkiraan kapasitas
+                var totalKB = totalBytes / 1024;
+                var totalMB = totalKB / 1024;
+                return {
+                    bytes: totalBytes,
+                    kilobytes: totalKB,
+                    megabytes: totalMB
+                };
+            }
+        }
+
+        function updateProgressBar(value, maxValue) {
+            // Menghitung persentase dari nilai terbesar
+            var percentage = (value / maxValue) * 100;
+            // Mengupdate nilai dan lebar progress bar
+            var progressBar = document.getElementById('lc_progressbar');
+            var progressBarInner = progressBar.querySelector('.progress-bar');
+            progressBarInner.style.width = percentage + '%';
+            progressBarInner.innerHTML = percentage.toFixed(2) + '%';
+        }
+
+
+        // update progress barr
+        updateProgressBar(getLocalStorageSize(), localstorage_max_size);
+
+        function hapus_tabel(tabel_name) {
+            try {
+
+                let result = confirm("Apakah anda yakin ingin menghapus tabel '" + tabel_name + "'");
+
+                if (!result) return iziToast.error({
+                    title: 'Gagal',
+                    message: `Tabel ${tabel_name} tidak jadi dihapus`
+                });
+
+                eval(`let tabel_ctx = ${tabel_name}.drop_table()`);
+
+                return iziToast.success({
+                    title: 'Berhasil',
+                    message: `Tabel ${tabel_name} berhasil dihapus!`
+                });
+
+            } catch (error) {
+                return iziToast.error({
+                    title: 'Gagal',
+                    message: error
+                })
+            }
+        }
+
+        function create_table(tabel_name) {
+            try {
+
+                eval(`create_${tabel_name}()`);
+
+                return iziToast.success({
+                    title: 'Berhasil',
+                    message: `Tabel ${tabel_name} berhasil dibuat!`
+                });
+
+            } catch (error) {
+                return iziToast.error({
+                    title: 'Gagal',
+                    message: error
+                })
+            }
+        }
+
+    </script>
+
+    <!-- Boostrap -->
+    <script src="/assets/javascripts/popper.min.js"></script>
+    <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

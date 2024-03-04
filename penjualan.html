@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aplikasi Toko - Daftar Penjualan</title>
+
+
+    <script src="/assets/javascripts/main.js"></script>
+
+    <!-- izitoast -->
+    <link rel="stylesheet" href="/assets/iziToast-master/dist/css/iziToast.min.css">
+    <script src="/assets/iziToast-master/dist/js/iziToast.min.js"></script>
+
+    <!-- bootsrap -->
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="/assets/styles/style.css">
+    <script src="/assets/javascripts/app.js"></script>
+
+    <script src="/assets/javascripts/jquery.min.js"></script>
+
+    <!-- data tables -->
+    <link rel="stylesheet" href="/assets/data-tables/datatables.min.css">
+    <script src="/assets/data-tables/datatables.min.js"></script>
+
+    <!-- data tables plus bootsrap -->
+    <link rel="stylesheet" href="/assets/data-tables/DataTables-2.0.0/css/dataTables.bootstrap5.min.css">
+    <script src="/assets/data-tables/DataTables-2.0.0/js/dataTables.bootstrap5.min.js"></script>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">Tokoku</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/">Halaman Utama</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/penjualan.html">Penjualan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " aria-current="page" href="/daftar_barang.html">Daftar Barang</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/pengaturan.html">Pengaturan</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <style>
+        table thead tr th {
+            min-width: 60px !important;
+            max-width: 100px;
+        }
+    </style>
+
+    <div class="container px-3 py-4">
+
+        <div class="row justify-content-between mb-3">
+
+            <div class="co-12 col-md-6 col-lg-6">
+                <h3 class="text-light-emphasis"> Tabel Penjualan Barang</h3>
+            </div>
+
+            <div class="col-12 col-md-4 col-lg-4" style="text-align: right;">
+                <a href="/reporting/template_laporan_penjualan.html" target="_blank__" class="btn btn-warning">Laporan</a>
+                <button type="button" class="btn btn-primary" onclick="open_add_modal()">Tambah
+                    Penjualan</button>
+            </div>
+
+        </div>
+
+        <div class="table-responsive">
+
+
+            <table id="tabel_daftar_barang" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th data-priority="10">Id</th>
+                        <th data-priority="0">Nama</th>
+                        <th data-priority="11">Pembeli</th>
+                        <th data-priority="3">Qty</th>
+                        <th data-priority="4">Transaksi</th>
+                        <th data-priority="6">Harga</th>
+                        <th data-priority="9" style="min-width: 120px !important;">Tanggal</th>
+                        <th data-priority="10">Aksi</th>
+                    </tr>
+                </thead>
+            </table>
+
+
+            <!-- Modal Tambah -->
+            <div class="modal fade" id="tambahRecord" tabindex="-1" aria-labelledby="tambahRecordLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="tambahRecordLabel">Tambah Data Penjualan</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="barang_field" class="form-label">Pilih Barang</label>
+                                <select class="form-select" aria-label="Default select example" id="barang_field"
+                                    required onchange="on_select_barang(this.value)">
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="nama_pembeli_field" class="form-label">Nama Pembeli Barang</label>
+                                <input autocomplete="off" type="text" class="form-control error-field"
+                                    id="nama_pembeli_field" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="qty_penjualan_field" class="form-label">QTY Barang</label>
+                                <input autocomplete="off" type="number" class="form-control" id="qty_penjualan_field"
+                                    required oninput="calculate_total_price(this.value)">
+                            </div>
+                            <div class="mb-3">
+                                <label for="harga_barang_field" class="form-label">Harga Barang</label>
+                                <input class="form-control disabled " id="harga_barang_field" disabled>
+                            </div>
+                            <div class="mb-3">
+                                <label for="total_harga_jual_field" class="form-label">Harga Total</label>
+                                <input autocomplete="off" type="text" class="form-control" id="total_harga_jual_field"
+                                    oninput="number_field(this)" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                            <button type="button" class="btn btn-primary"
+                                onclick="tambah_data_barang_baru()">Simpan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Modal Tambah -->
+
+        </div>
+
+
+    </div>
+
+
+    <!-- Boostrap -->
+    <script src="/assets/javascripts/popper.min.js"></script>
+    <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+
+
+        const add_modal = new bootstrap.Modal('#tambahRecord');
+
+        tampilkan_tabel_penjualan_barang();
+
+        const barang_field = document.getElementById('barang_field');
+        const nama_pembeli_field = document.getElementById('nama_pembeli_field');
+        const total_harga_jual_field = document.getElementById('total_harga_jual_field');
+        const qty_penjualan_field = document.getElementById('qty_penjualan_field');
+        const harga_barang_field = document.getElementById('harga_barang_field');
+
+        function open_add_modal() {
+            add_modal.show();
+        }
+
+        function tambah_data_barang_baru() {
+
+            if (barang_field.value === '') {
+                return alert('Harap pilih barang terlebih dahulu!');
+            }
+
+            if (
+                !validateTotalTransaksi(total_harga_jual_field.value) ||
+                !validateNamaPembeli(nama_pembeli_field.value) ||
+                !validateQtyJual(qty_penjualan_field.value)
+            ) {
+                return;
+            }
+
+            let barang = tabel_barang.get_record_by_id(barang_field.value);
+
+            let qty_int = parseInt(qty_penjualan_field.value);
+
+            let stock_int = parseInt(barang['stock']);
+
+            if (stock_int < qty_int) {
+                return alert(`QTY yang anda masukan melebihi sisa stock barang yaitu ${barang['stock']}`);
+            }
+
+            tabel_penjualan_barang.add_record({
+                nama: barang['nama'],
+                qty: qty_penjualan_field.value,
+                id_barang: barang['id'],
+                harga_barang: barang['harga_jual'],
+                total_transaksi: unformat_money(total_harga_jual_field.value),
+                pembeli: nama_pembeli_field.value,
+            });
+
+            // update qty
+            barang['stock'] = stock_int - qty_int;
+
+            tabel_barang.update_record(barang['id'], {
+                nama: barang['nama'],
+                stock: barang['stock'],
+                harga_beli: barang['harga_beli'],
+                harga_jual: barang['harga_jual'],
+                deskripsi: barang['deskripsi'],
+            });
+
+            iziToast.success({
+                title: 'Berhasil',
+                message: 'Barang (' + barang_field.value + ') berhasil di tambahkan'
+            });
+
+            barang_field.value = '';
+            nama_pembeli_field.value = '';
+            total_harga_jual_field.value = '';
+            qty_penjualan_field.value = '';
+
+            tampilkan_tabel_penjualan_barang();
+
+            add_modal.hide();
+        }
+
+        function tampilkan_tabel_penjualan_barang() {
+
+            let dataSet = tabel_penjualan_barang.get_records();
+
+            let tabel_barang = db.get_table('tabel_barang');
+
+            const barang_list_element = document.getElementById('barang_field');
+
+            let records = tabel_barang.get_records() ?? [];
+
+            let options_el = '<option selected value="">Pilih Barang</option>';
+
+            for (let index = 0; index < records.length; index++) {
+                let id = records[index]['id'];
+                let name = records[index]['nama'];
+                let stock = records[index]['stock'];
+                options_el += `<option value="${id}">${name} (${stock})</option>`;
+            }
+
+            barang_list_element.innerHTML = options_el;
+
+
+            $('#tabel_daftar_barang').DataTable().destroy();
+
+            $('#tabel_daftar_barang colgroup').remove();
+
+            $('#tabel_daftar_barang').DataTable({
+                language: {
+                    search: "Cari",
+                    lengthMenu: " _MENU_  Per Page" // Change "Entries per page" here
+                },
+                columns: [
+                    { titile: 'id', data: 'id' },
+                    { titile: 'Nama', data: 'nama' },
+                    {
+                        titile: 'pembeli',
+                        data: 'pembeli',
+                        render: function (data, type, row) {
+                            if (type === 'display' && data.length > 30) {
+                                return data.substr(0, 30) + '...';
+                            }
+                            return data;
+                        }
+                    },
+                    { titile: 'qty', data: 'qty' },
+                    { titile: 'Transaksi', data: 'total_transaksi' },
+                    { titile: 'Harga', data: 'harga_barang' },
+                    {
+                        titile: 'Tanggal Update',
+                        data: 'tgl_update',
+                        render: function (dateString, typr, row) {
+                            var parts = dateString.split(' '); // Memisahkan string menjadi bagian-bagian berdasarkan spasi
+
+                            // Bagian pertama adalah hari dalam seminggu, bagian kedua adalah tanggal, bagian ketiga adalah bulan
+                            var dayOfWeek = parts[0];
+                            var date = parts[1];
+                            var month = parts[2];
+                            var year = parts[3];
+
+                            // Menggabungkan kembali tanggal, bulan, dan tahun
+                            return date + ' ' + month + ' ' + year;
+                        }
+                    },
+                    { // Kolom Action
+                        data: null,
+                        render: function (data, type, row) {
+                            return `<button class="btn btn-sm btn-danger ms-2" type="button" onclick="delete_record_by_id(${row['id']})">Hapus</button>`;
+                        }
+                    }
+                ],
+                data: dataSet,
+                responsive: true,
+                columnDefs: [
+                    {
+                        targets: 4,
+                        render: function (data, type, row) {
+                            return format_money(data.toString());
+                        }
+                    },
+                    {
+                        targets: 5,
+                        render: function (data, type, row) {
+                            return format_money(data.toString());
+                        }
+                    },
+                    {
+                        targets: 3,
+                        render: function (data, type, row) {
+                            return data + ' pcs';
+                        }
+                    },
+                ]
+            });
+
+
+        };
+
+
+        // Function to validate nama barang field
+        function validateNamaBarang(value) {
+            value = value.trim();
+            if (value.length < 3 || value.length > 180) {
+                alert('Nama Barang harus memiliki panjang antara 3 dan 180 karakter.');
+                return false;
+            }
+            return true;
+        }
+
+        // Function to validate pembeli barang field
+        function validateNamaPembeli(value) {
+            value = value.trim();
+            if (value.length < 3 || value.length > 180) {
+                alert('Nama Pemebli harus memiliki panjang antara 3 dan 180 karakter.');
+                return false;
+            }
+            return true;
+        }
+
+        // Function to validate Harga Total field
+        function validateTotalTransaksi(value) {
+            value = value.trim();
+            // Remove currency formatting before validation
+            const numericValue = parseInt(value.replace("Rp ", "").replace(/,/g, ""));
+            if (isNaN(numericValue) || numericValue < 0) {
+                alert('Harga Total harus berformat "Rp 0" atau lebih.');
+                return false;
+            }
+
+            console.log(numericValue, format_money(numericValue), value);
+
+            if (isNaN(numericValue) || numericValue > 90000000) {
+                alert('Harga Total melebihi jumlah yang ditentukan "' + format_money(90000000) + '"".');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Function to validate qty barang field
+        function validateQtyJual(value) {
+            value = value.trim();
+            if (!Number.isInteger(Number(value))) {
+                alert('Qty Penjualan harus berupa bilangan bulat.');
+                return false;
+            }
+            return true;
+        }
+
+
+        function __fake_data() {
+
+            let example_data_barang = [
+                {
+                    nama: 'Lipstik',
+                    pembeli: 'Jina',
+                    qty: Math.floor(Math.random() * 100) + 1, // qty antara 1-100
+                    harga_barang: Math.floor(Math.random() * 50000) + 10000,
+                    total_transaksi: Math.floor(Math.random() * 160000) + 10000,
+                },
+                {
+                    nama: 'Bedak',
+                    pembeli: 'Nakla',
+                    qty: Math.floor(Math.random() * 100) + 1,
+                    harga_barang: Math.floor(Math.random() * 50000) + 10000,
+                    total_transaksi: Math.floor(Math.random() * 160000) + 10000,
+                },
+                {
+                    nama: 'Maskara',
+                    pembeli: 'Mena',
+                    qty: Math.floor(Math.random() * 100) + 1,
+                    harga_barang: Math.floor(Math.random() * 50000) + 10000,
+                    total_transaksi: Math.floor(Math.random() * 160000) + 10000,
+                },
+                {
+                    nama: 'Daka',
+                    pembeli: 'Melembabkan Kulit',
+                    qty: Math.floor(Math.random() * 100) + 1,
+                    harga_barang: Math.floor(Math.random() * 50000) + 10000,
+                    total_transaksi: Math.floor(Math.random() * 160000) + 10000,
+                },
+                {
+                    nama: 'Rifa',
+                    pembeli: 'Digunakan ',
+                    qty: 20,
+                    harga_barang: Math.floor(Math.random() * 50000) + 10000,
+                    total_transaksi: Math.floor(Math.random() * 160000) + 10000,
+                },
+                {
+                    nama: 'Pulpen',
+                    pembeli: 'Digunakan',
+                    qty: 20,
+                    harga_barang: Math.floor(Math.random() * 50000) + 10000,
+                    total_transaksi: Math.floor(Math.random() * 160000) + 10000,
+                }
+            ];
+
+            tabel_penjualan_barang.add_records(example_data_barang);
+        }
+
+        function calculate_total_price(value) {
+
+            const harga_barang_field = document.getElementById('harga_barang_field');
+
+            const total_harga_jual_field = document.getElementById('total_harga_jual_field');
+
+            let harga = unformat_money(harga_barang_field.value);
+
+            total_harga_jual_field.value = format_money(value * harga);
+        }
+
+        function on_select_barang(value) {
+            let record = tabel_barang.get_record_by_id(value);
+
+            const harga_barang_field = document.getElementById('harga_barang_field');
+
+            if (!record) {
+                harga_barang_field.value = '';
+            }
+
+            harga_barang_field.value = format_money(record['harga_jual']);
+
+            calculate_total_price(qty_penjualan_field.value);
+        }
+
+
+        function delete_record_by_id(id) {
+
+            let result = confirm(`Apakah anda yakin ingin menghapus barang dengan id ${id}`);
+
+            if (!result) return iziToast.error({
+                title: 'Gagal',
+                message: 'Barang dengan id (' + id + ') tidak jadi di hapus'
+            });
+
+            let record = tabel_penjualan_barang.get_record_by_id(id);
+
+            tabel_penjualan_barang.remove_record(id);
+
+            let barang = tabel_barang.get_record_by_id(record['id_barang']);
+
+            if (barang['stock'] == undefined) {
+                return;
+            }
+
+            // kembalikan stock
+
+            barang['stock'] = barang['stock'] + record['qty'];
+
+            tabel_barang.update_record(barang['id'], {
+                nama: barang['nama'],
+                stock: barang['stock'],
+                harga_beli: barang['harga_beli'],
+                harga_jual: barang['harga_jual'],
+                deskripsi: barang['deskripsi'],
+            });
+
+            iziToast.success({
+                title: 'Berhasil',
+                message: 'Data Penjualan Barang Dengan Id (' + id + ') Berhasil Di Hapus'
+            });
+
+            tampilkan_tabel_penjualan_barang();
+        }
+    </script>
+
+</body>
+
+</html>

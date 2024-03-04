@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aplikasi Toko</title>
+
+    <script src="/assets/javascripts/main.js"></script>
+
+    <!-- boostrap -->
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <script src="/assets/bootstrap/js/bootstrap.min.js" defer></script>
+    <script src="/assets/bootstrap/js/bootstrap.bundle.min.js" defer></script>
+    <script src="/assets/javascripts/popper.min.js" defer></script>
+
+    <!-- data tables -->
+    <link rel="stylesheet" href="/assets/data-tables/datatables.min.css">
+    <script src="/assets/data-tables/datatables.min.js" defer></script>
+
+    <!-- data tables plus bootsrap -->
+    <link rel="stylesheet" href="/assets/data-tables/DataTables-2.0.0/css/dataTables.bootstrap5.min.css">
+    <script src="/assets/data-tables/DataTables-2.0.0/js/dataTables.bootstrap5.min.js"></script>
+
+    <link rel="stylesheet" href="/assets/styles/style.css">
+    <script src="/assets/javascripts/app.js" defer></script>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">Tokoku</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/">Halaman Utama</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/penjualan.html">Penjualan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/daftar_barang.html">Daftar Barang</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="/pengaturan.html">Pengaturan</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pt-4">
+
+        <div class="alert alert-success" role="alert">
+            <h4 class="alert-heading">Selamat Datang!!</h4>
+            <p>Tokoku Merupakan aplikasi berbasis website sederhana yang dibangung untuk memudahkan manajemen toko
+                pengguna, website ini bersifat serverless jadi tidak mempunyai server utama untuk menyimpan data-data
+                pengguna, melainkan kami menggunakan localstorage sebagai sistem database alternatif</p>
+            <hr>
+            <p class="mb-0">Dibuat & dikembangkan oleh <a href="https://www.instagram.com/abdi_nat"
+                    target="__blan__">@Abdi</a> </p>
+        </div>
+
+        <h3 class="text-bg-dark fw-bolder mt-2">Daftar Menu</h3>
+
+        <ol class="list-group mt-2">
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <a class="ms-2 me-auto text-decoration-none d-block text-white" href="/penjualan.html">
+                    <div class="fw-bold">Tabel Penjualan</div>
+                    Halamn yang berisi semua data & laporan terkait penjualan baranag
+                </a>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto text-decoration-none d-block text-white" href="/daftar_barang.html">
+                    <div class="fw-bold">Tabel Barang</div>
+                    Halaman untuk menginput data barang penjualan
+                </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto text-decoration-none d-block text-white" href="/pengaturan.html">
+                    <div class="fw-bold">Halaman Pengaturan</div>
+                    Berisi semua pengaturan terkait website
+                </div>
+            </li>
+        </ol>
+
+    </div>
+
+</body>
+
+</html>
