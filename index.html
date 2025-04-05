@@ -1,250 +1,763 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Drone Booster v17 (Imitation Learning UI)</title>
+    <title>Drone Booster Game v17.3 (Fixed Targets)</title> <!-- Changed title -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- TensorFlow.js (optional if not using Imitation Learning) -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <!-- Neataptic -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/neataptic/1.4.7/neataptic.min.js"
         integrity="sha512-a63sjlVHtHb9FeQoW77qkgfKzfQmnf7G9NXdOY7iZOqc3xh0Q+rv4cE+QVQzxkfdInvpOoTir/QJuhij9sLLKA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Press+Start+2P&display=swap"
         rel="stylesheet">
     <style>
-        /* ... (CSS styles remain largely the same as provided) ... */
-        body { font-family: 'Inter', sans-serif; overscroll-behavior: none; background-color: #0f172a; }
-        body::-webkit-scrollbar { display: none; }
-        body { -ms-overflow-style: none; scrollbar-width: none; }
-        #gameCanvas { border: 1px solid rgba(255, 255, 255, 0.2); background-color: #0f0f1a; display: block; max-width: 95vw; max-height: 65vh; aspect-ratio: 16 / 9; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); cursor: none; touch-action: none; margin: 0 auto; }
-        .gameOverFont, #resetButton, .ai-control-label, .ai-stat-label, .obstacle-control-label, .scale-control-label, .config-label, .config-title, .imitation-label { font-family: 'Press Start 2P', cursive; font-size: 0.65rem; line-height: 1.2; }
-        .config-title { font-size: 0.8rem; color: #6366f1; text-transform: uppercase; margin-bottom: 0.5rem; padding-bottom: 0.25rem; border-bottom: 1px solid #4b5563; }
-        .config-label { color: #cbd5e1; display: block; margin-bottom: 0.1rem; }
-        .config-value { font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500; color: #e5e7eb; min-width: 3rem; text-align: right; background-color: #374151; padding: 0.1rem 0.3rem; border-radius: 0.25rem; }
-        .button-font { font-family: 'Press Start 2P', cursive; font-size: 0.7rem; }
-        .icon { display: inline-block; width: 1em; height: 1em; margin-right: 0.25em; vertical-align: -0.125em; filter: invert(90%) sepia(10%) saturate(100%) hue-rotate(180deg) brightness(90%) contrast(90%); }
-        input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: #4a5568; border-radius: 3px; outline: none; opacity: 0.7; transition: opacity .2s; vertical-align: middle; }
-        input[type=range]:hover:not(:disabled) { opacity: 1; }
-        input[type=range]:disabled { opacity: 0.4; cursor: not-allowed; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; background: #6366f1; border-radius: 50%; cursor: pointer; }
-        input[type=range]:disabled::-webkit-slider-thumb { background: #4b5563; cursor: not-allowed; }
-        input[type=range]::-moz-range-thumb { width: 16px; height: 16px; background: #6366f1; border-radius: 50%; cursor: pointer; border: none; }
-        input[type=range]:disabled::-moz-range-thumb { background: #4b5563; cursor: not-allowed; }
-        input[type="file"] { display: none; }
-        .file-label { background-color: #a855f7; border: none; color: white; padding: 0.5rem 0.8rem; border-radius: 0.375rem; font-size: 0.7rem; cursor: pointer; text-align: center; display: block; transition: background-color 0.2s; }
-        .file-label:hover { background-color: #9333ea; }
-        .file-label.disabled { background-color: #6b7280; cursor: not-allowed; opacity: 0.6; }
-        .control-value { font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; color: #cbd5e1; min-width: 2.5rem; text-align: right; }
-        .control-button { padding: 0.5rem 0.8rem; border-radius: 0.375rem; transition: background-color 0.2s, opacity 0.2s; color: white; text-align: center; border: none; cursor: pointer; }
-        .control-button:disabled { opacity: 0.5; cursor: not-allowed; }
-        .bar-background { fill: #4a5568; } .health-bar-foreground { fill: #4ade80; transition: width 0.2s ease-out; } .energy-bar-foreground { fill: #60a5fa; transition: width 0.2s ease-out; } .health-bar-damage { fill: #f87171; }
-        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(3px); }
-        .modal-content { background-color: #1f2937; margin: 5% auto; padding: 20px; border: 1px solid #4b5563; border-radius: 0.5rem; width: 80%; max-width: 700px; position: relative; color: #e5e7eb; }
-        .modal-close { color: #9ca3af; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .modal-close:hover, .modal-close:focus { color: #e5e7eb; text-decoration: none; }
-        .modal-pre { background-color: #111827; border: 1px solid #374151; border-radius: 0.375rem; padding: 1rem; max-height: 70vh; overflow-y: auto; font-family: monospace; font-size: 0.75rem; white-space: pre-wrap; word-wrap: break-word; }
-        input[type=checkbox] { appearance: none; -webkit-appearance: none; height: 1rem; width: 1rem; background-color: #4b5563; border: 1px solid #6b7280; border-radius: 0.25rem; display: inline-block; position: relative; cursor: pointer; vertical-align: middle; margin-right: 0.25rem; }
-        input[type=checkbox]:checked { background-color: #6366f1; border-color: #818cf8; }
-        input[type=checkbox]:checked::after { content: '✔'; font-size: 0.75rem; color: white; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); line-height: 1; }
-        input[type=checkbox]:focus { outline: none; box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5); }
-        input[type=checkbox]:disabled { opacity: 0.5; cursor: not-allowed; }
-        .checkbox-label { font-family: 'Inter', sans-serif; font-size: 0.7rem; color: #d1d5db; margin-left: 0.2rem; vertical-align: middle; }
-        select { background-color: #374151; border: 1px solid #4b5563; color: #e5e7eb; padding: 0.3rem 0.6rem; border-radius: 0.375rem; font-size: 0.75rem; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.5rem center; background-size: 1em; padding-right: 2rem; }
-        select:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5); }
-        select:disabled { opacity: 0.5; cursor: not-allowed; background-color: #4b5563; }
-        .hidden { display: none; }
+        /* --- CSS Styles (Mostly Unchanged) --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            overscroll-behavior: none;
+            background-color: #0f172a;
+            /* slate-900 */
+        }
+
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        body {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        #gameCanvas {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: #0f0f1a;
+            /* Slightly darker blue/black */
+            display: block;
+            max-width: 95vw;
+            max-height: 65vh;
+            aspect-ratio: 16 / 9;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            cursor: none;
+            /* Hide default cursor over canvas */
+            touch-action: none;
+            /* Prevent scrolling on touch devices */
+            margin: 0 auto;
+        }
+
+        /* --- Font Styles for Specific Elements --- */
+        .gameOverFont,
+        #resetButton,
+        .ai-control-label,
+        .ai-stat-label,
+        .obstacle-control-label,
+        .scale-control-label,
+        .config-label,
+        .config-title,
+        .imitation-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.65rem;
+            line-height: 1.2;
+        }
+
+        .config-title {
+            font-size: 0.8rem;
+            color: #6366f1;
+            /* indigo-500 */
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.25rem;
+            border-bottom: 1px solid #4b5563;
+            /* gray-600 */
+        }
+
+        .config-label {
+            color: #cbd5e1;
+            /* slate-300 */
+            display: block;
+            margin-bottom: 0.1rem;
+        }
+
+        .config-value {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #e5e7eb;
+            /* gray-200 */
+            min-width: 3rem;
+            text-align: right;
+            background-color: #374151;
+            /* gray-700 */
+            padding: 0.1rem 0.3rem;
+            border-radius: 0.25rem;
+        }
+
+        .button-font {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+        }
+
+        /* --- Icon Style --- */
+        .icon {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            margin-right: 0.25em;
+            vertical-align: -0.125em;
+            filter: invert(90%) sepia(10%) saturate(100%) hue-rotate(180deg) brightness(90%) contrast(90%);
+            /* Make icons whitish */
+        }
+
+        /* --- Input Range Slider Styles --- */
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #4a5568;
+            /* gray-600 */
+            border-radius: 3px;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+            vertical-align: middle;
+        }
+
+        input[type=range]:hover:not(:disabled) {
+            opacity: 1;
+        }
+
+        input[type=range]:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #6366f1;
+            /* indigo-500 */
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        input[type=range]:disabled::-webkit-slider-thumb {
+            background: #4b5563;
+            cursor: not-allowed;
+        }
+
+        input[type=range]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #6366f1;
+            /* indigo-500 */
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        input[type=range]:disabled::-moz-range-thumb {
+            background: #4b5563;
+            cursor: not-allowed;
+        }
+
+        /* --- File Input Styles --- */
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-label {
+            background-color: #a855f7;
+            /* purple-600 */
+            border: none;
+            color: white;
+            padding: 0.5rem 0.8rem;
+            border-radius: 0.375rem;
+            font-size: 0.7rem;
+            cursor: pointer;
+            text-align: center;
+            display: block;
+            transition: background-color 0.2s;
+        }
+
+        .file-label:hover {
+            background-color: #9333ea;
+            /* purple-700 */
+        }
+
+        .file-label.disabled {
+            background-color: #6b7280;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* --- Control Value/Button Styles --- */
+        .control-value {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #cbd5e1;
+            /* slate-300 */
+            min-width: 2.5rem;
+            text-align: right;
+        }
+
+        .control-button {
+            padding: 0.5rem 0.8rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s, opacity 0.2s;
+            color: white;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+        }
+
+        .control-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* --- Bar Styles (Health/Energy) --- */
+        .bar-background {
+            fill: #4a5568;
+            /* gray-600 */
+        }
+
+        .health-bar-foreground {
+            fill: #4ade80;
+            /* green-400 */
+            transition: width 0.2s ease-out;
+        }
+
+        .energy-bar-foreground {
+            fill: #60a5fa;
+            /* blue-400 */
+            transition: width 0.2s ease-out;
+        }
+
+        .health-bar-damage {
+            fill: #f87171;
+            /* red-400 */
+        }
+
+        /* --- Modal Styles --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-content {
+            background-color: #1f2937;
+            /* gray-800 */
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #4b5563;
+            /* gray-600 */
+            border-radius: 0.5rem;
+            width: 80%;
+            max-width: 700px;
+            position: relative;
+            color: #e5e7eb;
+            /* gray-200 */
+        }
+
+        .modal-close {
+            color: #9ca3af;
+            /* gray-400 */
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-close:hover,
+        .modal-close:focus {
+            color: #e5e7eb;
+            text-decoration: none;
+        }
+
+        .modal-pre {
+            background-color: #111827;
+            /* gray-900 */
+            border: 1px solid #374151;
+            /* gray-700 */
+            border-radius: 0.375rem;
+            padding: 1rem;
+            max-height: 70vh;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.75rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* --- Checkbox Styles --- */
+        input[type=checkbox] {
+            appearance: none;
+            -webkit-appearance: none;
+            height: 1rem;
+            width: 1rem;
+            background-color: #4b5563;
+            /* gray-600 */
+            border: 1px solid #6b7280;
+            /* gray-500 */
+            border-radius: 0.25rem;
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            vertical-align: middle;
+            margin-right: 0.25rem;
+        }
+
+        input[type=checkbox]:checked {
+            background-color: #6366f1;
+            border-color: #818cf8;
+        }
+
+        /* indigo-500, indigo-400 */
+        input[type=checkbox]:checked::after {
+            content: '✔';
+            font-size: 0.75rem;
+            color: white;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            line-height: 1;
+        }
+
+        input[type=checkbox]:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
+        }
+
+        input[type=checkbox]:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .checkbox-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            color: #d1d5db;
+            /* gray-300 */
+            margin-left: 0.2rem;
+            vertical-align: middle;
+        }
+
+        /* --- Select Dropdown Styles --- */
+        select {
+            background-color: #374151;
+            /* gray-700 */
+            border: 1px solid #4b5563;
+            /* gray-600 */
+            color: #e5e7eb;
+            /* gray-200 */
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1em;
+            padding-right: 2rem;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
+        }
+
+        select:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #4b5563;
+        }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 
 <body class="bg-gray-900 text-gray-200 flex flex-col items-center min-h-screen p-2 sm:p-4">
 
+    <!-- Welcome / Config Screen -->
     <div id="welcomeScreen" class="w-full max-w-6xl bg-gray-800 p-4 md:p-6 rounded-lg shadow-xl">
+        <!-- Changed Title -->
         <h1 class="text-2xl font-bold text-center text-indigo-400 mb-6" style="font-family: 'Press Start 2P', cursive;">
             Drone Booster Config</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- NEAT Config -->
             <div class="bg-gray-700 p-4 rounded-md shadow-md space-y-3">
-                <h2 class="config-title">Konfigurasi NEAT</h2>
-                <div><label for="configMutationRate" class="config-label">Mutation Rate:</label><div class="flex items-center space-x-2"><input type="range" id="configMutationRate" min="0.1" max="1.0" value="0.6" step="0.05" class="flex-grow"><span id="mutationRateValue" class="config-value">0.60</span></div></div>
-                <div><label for="configMutationAmount" class="config-label">Mutation Amount:</label><div class="flex items-center space-x-2"><input type="range" id="configMutationAmount" min="1" max="10" value="4" step="1" class="flex-grow"><span id="mutationAmountValue" class="config-value">4</span></div></div>
-                <div><label for="configElitism" class="config-label">Elitism (Top %):</label><div class="flex items-center space-x-2"><input type="range" id="configElitism" min="0" max="50" value="10" step="1" class="flex-grow"><span id="elitismValue" class="config-value">10%</span></div></div>
-                <div><label class="config-label mb-1">Metode Mutasi:</label><div id="mutationMethodsContainer" class="grid grid-cols-1 gap-x-4 gap-y-1 text-xs max-h-48 overflow-y-auto pr-2"></div></div>
+                <!-- Changed Header -->
+                <h2 class="config-title">NEAT Configuration</h2>
+                <!-- Changed Labels -->
+                <div><label for="configMutationRate" class="config-label">Mutation Rate:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configMutationRate" min="0.1"
+                            max="1.0" value="0.6" step="0.05" class="flex-grow"><span id="mutationRateValue"
+                            class="config-value">0.60</span></div>
+                </div>
+                <div><label for="configMutationAmount" class="config-label">Mutation Amount:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configMutationAmount" min="1"
+                            max="10" value="4" step="1" class="flex-grow"><span id="mutationAmountValue"
+                            class="config-value">4</span></div>
+                </div>
+                <div><label for="configElitism" class="config-label">Elitism (Top %):</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configElitism" min="0" max="50"
+                            value="10" step="1" class="flex-grow"><span id="elitismValue"
+                            class="config-value">10%</span></div>
+                </div>
+                <div><label class="config-label mb-1">Mutation Methods:</label>
+                    <div id="mutationMethodsContainer"
+                        class="grid grid-cols-1 gap-x-4 gap-y-1 text-xs max-h-48 overflow-y-auto pr-2"></div>
+                </div>
             </div>
+            <!-- Game Config -->
             <div class="bg-gray-700 p-4 rounded-md shadow-md space-y-3">
-                <h2 class="config-title">Konfigurasi Game</h2>
-                <div><label for="configGravity" class="config-label">Gravitasi:</label><div class="flex items-center space-x-2"><input type="range" id="configGravity" min="0.01" max="0.3" value="0.09" step="0.01" class="flex-grow"><span id="gravityValue" class="config-value">0.09</span></div></div>
-                <div><label for="configThrust" class="config-label">Kekuatan Dorong:</label><div class="flex items-center space-x-2"><input type="range" id="configThrust" min="0.05" max="0.5" value="0.19" step="0.01" class="flex-grow"><span id="thrustValue" class="config-value">0.19</span></div></div>
-                <div> <label for="configMaxEnergy" class="config-label">Energi Maks:</label><div class="flex items-center space-x-2"><input type="range" id="configMaxEnergy" min="50" max="500" value="100" step="10" class="flex-grow"><span id="maxEnergyValue" class="config-value">100</span></div></div>
-                <div> <label for="configThrustCost" class="config-label">Biaya Energi Dorong:</label><div class="flex items-center space-x-2"><input type="range" id="configThrustCost" min="0.01" max="1.0" value="0.2" step="0.01" class="flex-grow"><span id="thrustCostValue" class="config-value">0.20</span></div></div>
-                <div><label for="configMaxHealth" class="config-label">Health Maks:</label><div class="flex items-center space-x-2"><input type="range" id="configMaxHealth" min="50" max="500" value="200" step="10" class="flex-grow"><span id="maxHealthValue" class="config-value">200</span></div></div>
-                <div><label for="configRegenRate" class="config-label">Rate Regenerasi Health:</label><div class="flex items-center space-x-2"><input type="range" id="configRegenRate" min="0" max="1.0" value="0.15" step="0.01" class="flex-grow"><span id="regenRateValue" class="config-value">0.15</span></div></div>
-                <div><label for="configSensorRange" class="config-label">Jarak Sensor:</label><div class="flex items-center space-x-2"><input type="range" id="configSensorRange" min="50" max="500" value="250" step="10" class="flex-grow"><span id="sensorRangeValue" class="config-value">250</span></div></div>
-                <div><label for="configWallPenalty" class="config-label">Penalti Dinding:</label><div class="flex items-center space-x-2"><input type="range" id="configWallPenalty" min="0" max="2" value="0.3" step="0.05" class="flex-grow"><span id="wallPenaltyValue" class="config-value">0.30</span></div></div>
-                <div><label for="configFloorPenalty" class="config-label">Penalti Lantai:</label><div class="flex items-center space-x-2"><input type="range" id="configFloorPenalty" min="0" max="2" value="0.7" step="0.05" class="flex-grow"><span id="floorPenaltyValue" class="config-value">0.70</span></div></div>
-                <div><label for="configSafeZoneReward" class="config-label">Reward Zona Aman:</label><div class="flex items-center space-x-2"><input type="range" id="configSafeZoneReward" min="0" max="0.5" value="0.05" step="0.01" class="flex-grow"><span id="safeZoneRewardValue" class="config-value">0.05</span></div></div>
-                <div><label for="configAltitudeReward" class="config-label">Reward Ketinggian:</label><div class="flex items-center space-x-2"><input type="range" id="configAltitudeReward" min="0" max="0.5" value="0.06" step="0.01" class="flex-grow"><span id="altitudeRewardValue" class="config-value">0.06</span></div></div>
-                <div> <label for="configTargetProximityReward" class="config-label">Reward Kedekatan Target:</label><div class="flex items-center space-x-2"><input type="range" id="configTargetProximityReward" min="0" max="5" value="1.5" step="0.1" class="flex-grow"><span id="targetProximityRewardValue" class="config-value">1.5</span></div></div>
+                <!-- Changed Header -->
+                <h2 class="config-title">Game Configuration</h2>
+                <!-- Changed Labels -->
+                <div><label for="configGravity" class="config-label">Gravity:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configGravity" min="0.01" max="0.3"
+                            value="0.09" step="0.01" class="flex-grow"><span id="gravityValue"
+                            class="config-value">0.09</span></div>
+                </div>
+                <div><label for="configThrust" class="config-label">Thrust Power:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configThrust" min="0.05" max="0.5"
+                            value="0.19" step="0.01" class="flex-grow"><span id="thrustValue"
+                            class="config-value">0.19</span></div>
+                </div>
+                <div> <label for="configMaxEnergy" class="config-label">Max Energy (Base):</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configMaxEnergy" min="50" max="500"
+                            value="100" step="10" class="flex-grow"><span id="maxEnergyValue"
+                            class="config-value">100</span></div>
+                </div>
+                <div> <label for="configThrustCost" class="config-label">Thrust Energy Cost:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configThrustCost" min="0.01"
+                            max="1.0" value="0.2" step="0.01" class="flex-grow"><span id="thrustCostValue"
+                            class="config-value">0.20</span></div>
+                </div>
+                <div><label for="configMaxHealth" class="config-label">Max Health (Base):</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configMaxHealth" min="50" max="500"
+                            value="200" step="10" class="flex-grow"><span id="maxHealthValue"
+                            class="config-value">200</span></div>
+                </div>
+                <div><label for="configRegenRate" class="config-label">Passive Health Regen:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configRegenRate" min="0" max="1.0"
+                            value="0.15" step="0.01" class="flex-grow"><span id="regenRateValue"
+                            class="config-value">0.15</span></div>
+                </div>
+                <div><label for="configSensorRange" class="config-label">Obstacle Sensor Range:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configSensorRange" min="50"
+                            max="500" value="250" step="10" class="flex-grow"><span id="sensorRangeValue"
+                            class="config-value">250</span></div>
+                </div>
+                <div><label for="configWallPenalty" class="config-label">Wall Penalty:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configWallPenalty" min="0" max="2"
+                            value="0.3" step="0.05" class="flex-grow"><span id="wallPenaltyValue"
+                            class="config-value">0.30</span></div>
+                </div>
+                <div><label for="configFloorPenalty" class="config-label">Floor Penalty:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configFloorPenalty" min="0" max="2"
+                            value="0.7" step="0.05" class="flex-grow"><span id="floorPenaltyValue"
+                            class="config-value">0.70</span></div>
+                </div>
+                <div><label for="configSafeZoneReward" class="config-label">Safe Zone Reward:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configSafeZoneReward" min="0"
+                            max="0.5" value="0.05" step="0.01" class="flex-grow"><span id="safeZoneRewardValue"
+                            class="config-value">0.05</span></div>
+                </div>
+                <div><label for="configAltitudeReward" class="config-label">Altitude Reward:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configAltitudeReward" min="0"
+                            max="0.5" value="0.06" step="0.01" class="flex-grow"><span id="altitudeRewardValue"
+                            class="config-value">0.06</span></div>
+                </div>
+                <div> <label for="configTargetProximityReward" class="config-label">Target Proximity Reward:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configTargetProximityReward"
+                            min="0" max="5" value="2.5" step="0.1" class="flex-grow"><span
+                            id="targetProximityRewardValue" class="config-value">2.5</span></div>
+                </div>
             </div>
+            <!-- Drone Dimensions -->
             <div class="bg-gray-700 p-4 rounded-md shadow-md space-y-3">
-                <h2 class="config-title">Dimensi Drone</h2>
-                <div><label for="configBodyWidth" class="config-label">Lebar Body:</label><div class="flex items-center space-x-2"><input type="range" id="configBodyWidth" min="10" max="100" value="40" step="1" class="flex-grow"><span id="bodyWidthValue" class="config-value">40</span></div></div>
-                <div><label for="configBodyHeight" class="config-label">Tinggi Body:</label><div class="flex items-center space-x-2"><input type="range" id="configBodyHeight" min="5" max="50" value="18" step="1" class="flex-grow"><span id="bodyHeightValue" class="config-value">18</span></div></div>
-                <div><label for="configBoosterWidth" class="config-label">Lebar Booster:</label><div class="flex items-center space-x-2"><input type="range" id="configBoosterWidth" min="2" max="30" value="10" step="1" class="flex-grow"><span id="boosterWidthValue" class="config-value">10</span></div></div>
-                <div><label for="configBoosterHeight" class="config-label">Tinggi Booster:</label><div class="flex items-center space-x-2"><input type="range" id="configBoosterHeight" min="5" max="50" value="20" step="1" class="flex-grow"><span id="boosterHeightValue" class="config-value">20</span></div></div>
-                <div><label for="configBoosterSeparation" class="config-label">Jarak Booster:</label><div class="flex items-center space-x-2"><input type="range" id="configBoosterSeparation" min="10" max="80" value="60" step="1" class="flex-grow"> <span id="boosterSeparationValue" class="config-value">60</span></div></div>
-                <div><label for="configBoosterOffsetY" class="config-label">Offset Y Booster:</label><div class="flex items-center space-x-2"><input type="range" id="configBoosterOffsetY" min="-20" max="20" value="0" step="1" class="flex-grow"><span id="boosterOffsetYValue" class="config-value">0</span></div></div>
+                <!-- Changed Header -->
+                <h2 class="config-title">Drone Dimensions</h2>
+                <!-- Changed Labels -->
+                <div><label for="configBodyWidth" class="config-label">Body Width:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configBodyWidth" min="10" max="100"
+                            value="40" step="1" class="flex-grow"><span id="bodyWidthValue"
+                            class="config-value">40</span></div>
+                </div>
+                <div><label for="configBodyHeight" class="config-label">Body Height:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configBodyHeight" min="5" max="50"
+                            value="18" step="1" class="flex-grow"><span id="bodyHeightValue"
+                            class="config-value">18</span></div>
+                </div>
+                <div><label for="configBoosterWidth" class="config-label">Booster Width:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configBoosterWidth" min="2"
+                            max="30" value="10" step="1" class="flex-grow"><span id="boosterWidthValue"
+                            class="config-value">10</span></div>
+                </div>
+                <div><label for="configBoosterHeight" class="config-label">Booster Height:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configBoosterHeight" min="5"
+                            max="50" value="20" step="1" class="flex-grow"><span id="boosterHeightValue"
+                            class="config-value">20</span></div>
+                </div>
+                <div><label for="configBoosterSeparation" class="config-label">Booster Separation:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configBoosterSeparation" min="10"
+                            max="80" value="60" step="1" class="flex-grow"> <span id="boosterSeparationValue"
+                            class="config-value">60</span></div>
+                </div>
+                <div><label for="configBoosterOffsetY" class="config-label">Booster Y Offset:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configBoosterOffsetY" min="-20"
+                            max="20" value="0" step="1" class="flex-grow"><span id="boosterOffsetYValue"
+                            class="config-value">0</span></div>
+                </div>
             </div>
+            <!-- Visual & Target -->
             <div class="bg-gray-700 p-4 rounded-md shadow-md space-y-3">
-                <h2 class="config-title">Visual & Target</h2>
-                <div class="flex items-center justify-between"><label for="configMotionBlurToggle" class="config-label flex-grow">Motion Blur:</label><input type="checkbox" id="configMotionBlurToggle"></div>
-                <div id="motionBlurIntensityContainer" class="hidden"> <label for="configMotionBlurIntensity" class="config-label">Intensitas Blur:</label><div class="flex items-center space-x-2"><input type="range" id="configMotionBlurIntensity" min="0.05" max="0.5" value="0.2" step="0.01" class="flex-grow"><span id="motionBlurIntensityValue" class="config-value">0.20</span></div></div>
+                <!-- Changed Header -->
+                <h2 class="config-title">Visuals & Target</h2>
+                <!-- Changed Labels -->
+                <div class="flex items-center justify-between"><label for="configMotionBlurToggle"
+                        class="config-label flex-grow">Motion Blur:</label><input type="checkbox"
+                        id="configMotionBlurToggle"></div>
+                <div id="motionBlurIntensityContainer" class="hidden"> <label for="configMotionBlurIntensity"
+                        class="config-label">Blur Intensity:</label>
+                    <div class="flex items-center space-x-2"><input type="range" id="configMotionBlurIntensity"
+                            min="0.05" max="0.5" value="0.2" step="0.01" class="flex-grow"><span
+                            id="motionBlurIntensityValue" class="config-value">0.20</span></div>
+                </div>
                 <div class="pt-2 border-t border-gray-600"></div>
-                <div class="flex items-center justify-between"><label for="configTargetSystemEnabled" class="config-label flex-grow">Sistem Target:</label><input type="checkbox" id="configTargetSystemEnabled" checked></div>
+                <div class="flex items-center justify-between"><label for="configTargetSystemEnabled"
+                        class="config-label flex-grow">Target System:</label><input type="checkbox"
+                        id="configTargetSystemEnabled" checked></div>
                 <div id="targetSystemOptionsContainer">
-                    <div> <label for="configTargetSpawnInterval" class="config-label">Interval Spawn Target (s):</label><div class="flex items-center space-x-2"><input type="range" id="configTargetSpawnInterval" min="0.5" max="10" value="1" step="0.1" class="flex-grow"> <span id="targetSpawnIntervalValue" class="config-value">1.0s</span></div></div>
-                    <div> <label for="configTargetLifetime" class="config-label">Durasi Hidup Target (s):</label><div class="flex items-center space-x-2"><input type="range" id="configTargetLifetime" min="2" max="30" value="10" step="1" class="flex-grow"> <span id="targetLifetimeValue" class="config-value">10s</span></div></div>
+                    <div> <label for="configTargetSpawnInterval" class="config-label">Target Spawn Interval (s):</label>
+                        <div class="flex items-center space-x-2"><input type="range" id="configTargetSpawnInterval"
+                                min="0.5" max="10" value="0.5" step="0.1" class="flex-grow"> <span
+                                id="targetSpawnIntervalValue" class="config-value">0.5s</span></div>
+                    </div>
+                    <div> <label for="configTargetLifetime" class="config-label">Target Lifetime (s):</label>
+                        <div class="flex items-center space-x-2"><input type="range" id="configTargetLifetime" min="2"
+                                max="30" value="15" step="1" class="flex-grow"> <span id="targetLifetimeValue"
+                                class="config-value">15s</span></div>
+                    </div>
+                    <!-- Target size config removed from UI, set in JS CONFIG -->
+                    <!-- Updated description text to English -->
+                    <p class="text-xs text-gray-400 mt-2">Target Hover Regen: 40%/s</p>
+                    <p class="text-xs text-gray-400">Target Stat Bonus: 5%</p>
+                    <p class="text-xs text-gray-400">Target Score Bonus: 250</p>
                 </div>
             </div>
         </div>
         <div class="mt-8 text-center">
-            <button id="startGameButton" class="control-button bg-green-600 hover:bg-green-700 button-font px-8 py-3 text-lg">
-                Mulai Game
+            <!-- Changed Button Text -->
+            <button id="startGameButton"
+                class="control-button bg-green-600 hover:bg-green-700 button-font px-8 py-3 text-lg">
+                Start Game
             </button>
         </div>
     </div>
 
+    <!-- Game Screen -->
     <div id="gameScreen" class="hidden w-full flex flex-col items-center">
-        <div id="uiContainer" class="w-full max-w-5xl flex flex-col sm:flex-row justify-between items-center mb-1 px-1 sm:px-2 gap-1">
-            <div id="controls" class="bg-gray-800 bg-opacity-75 p-1.5 rounded-lg shadow-md text-xs flex items-center space-x-1 flex-wrap justify-center">
+        <!-- Top UI (Controls & Score) -->
+        <div id="uiContainer"
+            class="w-full max-w-5xl flex flex-col sm:flex-row justify-between items-center mb-1 px-1 sm:px-2 gap-1">
+            <div id="controls"
+                class="bg-gray-800 bg-opacity-75 p-1.5 rounded-lg shadow-md text-xs flex items-center space-x-1 flex-wrap justify-center">
+                <!-- Changed Control Legend Text -->
                 <span class="font-semibold hidden sm:inline mr-1">Manual:</span>
-                <span title="Rotasi Kiri"><img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/rotate-ccw.svg" alt="Rotasi Kiri" class="icon">[A/←]</span> |
-                <span title="Rotasi Kanan"><img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/rotate-cw.svg" alt="Rotasi Kanan" class="icon">[D/→]</span> |
-                <span title="Dorong"><img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/arrow-up-circle.svg" alt="Dorong" class="icon">[W/↑/Spc]</span> |
-                <span title="Reset Manual"><img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/refresh-cw.svg" alt="Ulang" class="icon">[R]</span> |
-                <span title="Toggle AI NEAT"><img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/brain-circuit.svg" alt="Toggle AI" class="icon">[T]</span> |
-                <span title="Playback AI NEAT"><img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/play-circle.svg" alt="Playback AI" class="icon">[P]</span>
+                <span title="Rotate Left"><img
+                        src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/rotate-ccw.svg" alt="Rotate Left"
+                        class="icon">[A/←]</span> |
+                <span title="Rotate Right"><img
+                        src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/rotate-cw.svg" alt="Rotate Right"
+                        class="icon">[D/→]</span> |
+                <span title="Thrust"><img
+                        src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/arrow-up-circle.svg" alt="Thrust"
+                        class="icon">[W/↑/Spc]</span> |
+                <span title="Manual Reset"><img
+                        src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/refresh-cw.svg" alt="Reset"
+                        class="icon">[R]</span> |
+                <span title="Toggle NEAT AI"><img
+                        src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/brain-circuit.svg" alt="Toggle AI"
+                        class="icon">[T]</span> |
+                <span title="Playback NEAT AI"><img
+                        src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/play-circle.svg" alt="Playback AI"
+                        class="icon">[P]</span>
             </div>
-            <div id="scoreBoard" class="bg-gray-800 bg-opacity-75 p-1.5 rounded-lg shadow-md text-xs sm:text-sm font-bold text-green-400 flex items-center">
-                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/award.svg" alt="Skor" class="icon mr-1 sm:mr-2">
-                <span id="scoreDisplay">Skor Manual: 0</span>
-                <span id="aiScoreDisplay" class="ml-2 hidden">Skor AI Terbaik: 0</span>
-                <span id="playbackScoreDisplay" class="ml-2 hidden">Skor Playback: 0</span>
+            <div id="scoreBoard"
+                class="bg-gray-800 bg-opacity-75 p-1.5 rounded-lg shadow-md text-xs sm:text-sm font-bold text-green-400 flex items-center">
+                <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/award.svg" alt="Score"
+                    class="icon mr-1 sm:mr-2">
+                <!-- Changed Score Text -->
+                <span id="scoreDisplay">Manual Score: 0</span>
+                <span id="aiScoreDisplay" class="ml-2 hidden">Best AI Score: 0</span>
+                <span id="playbackScoreDisplay" class="ml-2 hidden">Playback Score: 0</span>
             </div>
         </div>
 
+        <!-- Scale Control -->
         <div id="scaleControlContainer" class="w-full max-w-5xl flex justify-center items-center my-2 px-1 sm:px-2">
-            <label for="gameScaleSelect" class="mr-2 scale-control-label text-gray-300">Skala Game:</label>
+            <!-- Changed Label -->
+            <label for="gameScaleSelect" class="mr-2 scale-control-label text-gray-300">Game Scale:</label>
+            <!-- Changed Options Text -->
             <select id="gameScaleSelect">
                 <option value="1">Normal (1x)</option>
-                <option value="0.75" selected>Kecil (0.75x)</option>
-                <option value="0.5">Sangat Kecil (0.5x)</option>
-                <option value="0.25">Mikro (0.25x)</option>
+                <option value="0.75" selected>Small (0.75x)</option> <!-- Default Small -->
+                <option value="0.5">Tiny (0.5x)</option>
+                <option value="0.25">Micro (0.25x)</option>
             </select>
         </div>
 
+        <!-- Canvas -->
         <canvas id="gameCanvas"></canvas>
 
-        <div id="messageBox" class="w-full max-w-5xl mt-1 p-1.5 bg-yellow-900 bg-opacity-60 rounded-lg shadow-md text-center text-yellow-300 font-semibold text-xs min-h-[2em] flex items-center justify-center">
-            Tekan [R] untuk Main Manual, [T] untuk Training AI, [P] untuk Playback AI Terbaik.
+        <!-- Message Box -->
+        <div id="messageBox"
+            class="w-full max-w-5xl mt-1 p-1.5 bg-yellow-900 bg-opacity-60 rounded-lg shadow-md text-center text-yellow-300 font-semibold text-xs min-h-[2em] flex items-center justify-center">
+            <!-- Changed Initial Message -->
+            Press [R] for Manual, [T] to Train AI, [P] to Playback Best AI.
         </div>
 
-        <div id="aiControls" class="w-full max-w-5xl mt-2 p-2 bg-gray-800 bg-opacity-80 rounded-lg shadow-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-
+        <!-- AI Controls Panel -->
+        <div id="aiControls"
+            class="w-full max-w-5xl mt-2 p-2 bg-gray-800 bg-opacity-80 rounded-lg shadow-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+            <!-- NEAT Controls -->
             <div id="neatControlsCol1" class="space-y-1">
-                 <h3 class="ai-control-label text-indigo-300 border-b border-gray-600 pb-1 mb-1">Kontrol NEAT</h3>
-                <label for="populationSize" class="ai-control-label block">Populasi AI:</label>
+                <!-- Changed Header and Labels/Buttons -->
+                <h3 class="ai-control-label text-indigo-300 border-b border-gray-600 pb-1 mb-1">NEAT Controls</h3>
+                <label for="populationSize" class="ai-control-label block">AI Population:</label>
                 <div class="flex items-center space-x-1">
                     <input type="range" id="populationSize" min="10" max="500" value="50" step="10" class="flex-grow">
                     <span id="populationValue" class="control-value">50</span>
                 </div>
-                <label for="trainingSpeed" class="ai-control-label block">Kecepatan Train:</label>
+                <label for="trainingSpeed" class="ai-control-label block">Training Speed:</label>
                 <div class="flex items-center space-x-1">
                     <input type="range" id="trainingSpeed" min="1" max="30" value="15" step="1" class="flex-grow">
                     <span id="speedValue" class="control-value">15x</span>
                 </div>
-                <button id="startAiButton" class="w-full mt-1 control-button bg-green-600 hover:bg-green-700 button-font">Mulai AI [T]</button>
-                <button id="stopAiButton" class="w-full mt-1 control-button bg-red-600 hover:bg-red-700 button-font hidden">Stop AI</button>
-                <button id="playBestAiButton" class="w-full mt-1 control-button bg-cyan-600 hover:bg-cyan-700 button-font" disabled>Playback AI [P]</button>
+                <button id="startAiButton"
+                    class="w-full mt-1 control-button bg-green-600 hover:bg-green-700 button-font">Start AI [T]</button>
+                <button id="stopAiButton"
+                    class="w-full mt-1 control-button bg-red-600 hover:bg-red-700 button-font hidden">Stop AI</button>
+                <button id="playBestAiButton"
+                    class="w-full mt-1 control-button bg-cyan-600 hover:bg-cyan-700 button-font" disabled>Playback AI
+                    [P]</button>
             </div>
-
+            <!-- NEAT Stats -->
             <div id="neatControlsCol2" class="space-y-0.5">
-                 <h3 class="ai-control-label text-indigo-300 border-b border-gray-600 pb-1 mb-1">Statistik NEAT</h3>
-                <div class="ai-stat-label">Generasi: <span id="generationCount" class="font-mono text-gray-300">0</span></div>
-                <div class="ai-stat-label">Skor Terbaik: <span id="bestFitness" class="font-mono text-gray-300">0</span></div>
-                <div class="ai-stat-label">Skor Rata2: <span id="avgFitness" class="font-mono text-gray-300">0</span></div>
-                <div class="ai-stat-label">Drone Aktif: <span id="activeDrones" class="font-mono text-gray-300">0</span></div>
-                <div class="ai-stat-label">Mode: <span id="currentMode" class="font-mono text-gray-300">Manual</span></div>
-                <button id="resetButton" class="w-full mt-1 control-button bg-red-600 hover:bg-red-700 button-font">Reset Manual [R]</button>
-                <button id="clearObstaclesButton" class="w-full mt-1 control-button bg-orange-600 hover:bg-orange-700 button-font">Hapus Rintangan</button>
+                <!-- Changed Header and Labels/Buttons -->
+                <h3 class="ai-control-label text-indigo-300 border-b border-gray-600 pb-1 mb-1">NEAT Stats</h3>
+                <div class="ai-stat-label">Generation: <span id="generationCount"
+                        class="font-mono text-gray-300">0</span></div>
+                <div class="ai-stat-label">Best Score: <span id="bestFitness" class="font-mono text-gray-300">0</span>
+                </div>
+                <div class="ai-stat-label">Average Score: <span id="avgFitness" class="font-mono text-gray-300">0</span>
+                </div>
+                <div class="ai-stat-label">Active Drones: <span id="activeDrones"
+                        class="font-mono text-gray-300">0</span></div>
+                <div class="ai-stat-label">Mode: <span id="currentMode" class="font-mono text-gray-300">Manual</span>
+                </div>
+                <button id="resetButton"
+                    class="w-full mt-1 control-button bg-red-600 hover:bg-red-700 button-font">Reset Manual [R]</button>
+                <button id="clearObstaclesButton"
+                    class="w-full mt-1 control-button bg-orange-600 hover:bg-orange-700 button-font">Clear
+                    Obstacles</button>
             </div>
-
-             <div id="neatControlsCol3" class="space-y-1">
-                 <h3 class="ai-control-label text-indigo-300 border-b border-gray-600 pb-1 mb-1">Model NEAT</h3>
-                <button id="saveModelButton" class="w-full control-button bg-blue-600 hover:bg-blue-700 button-font" disabled>Simpan Model</button>
+            <!-- NEAT Model Management -->
+            <div id="neatControlsCol3" class="space-y-1">
+                <!-- Changed Header and Labels/Buttons -->
+                <h3 class="ai-control-label text-indigo-300 border-b border-gray-600 pb-1 mb-1">NEAT Model</h3>
+                <button id="saveModelButton" class="w-full control-button bg-blue-600 hover:bg-blue-700 button-font"
+                    disabled>Save Model</button>
                 <label for="importFile" class="file-label button-font" id="importFileLabel">Import Model</label>
                 <input type="file" id="importFile" accept=".json">
-                <div class="ai-stat-label mt-1">Model Tersimpan:</div>
-                <div id="savedModelStatus" class="font-mono text-gray-400 text-xs break-words">Belum ada</div>
-                <button id="viewNetworkButton" class="w-full mt-1 control-button bg-purple-600 hover:bg-purple-700 button-font" disabled>Lihat Jaringan</button>
+                <div class="ai-stat-label mt-1">Saved Model:</div>
+                <div id="savedModelStatus" class="font-mono text-gray-400 text-xs break-words">None yet</div>
+                <button id="viewNetworkButton"
+                    class="w-full mt-1 control-button bg-purple-600 hover:bg-purple-700 button-font" disabled>View
+                    Network</button>
             </div>
-
-            <!-- <div id="imitationControls" class="space-y-1">
-                <h3 class="ai-control-label text-blue-300 border-b border-gray-600 pb-1 mb-1">Imitation Learning</h3>
-                <button id="recordButton" class="w-full control-button bg-green-600 hover:bg-green-700 button-font">Mulai Rekam</button>
-                <button id="trainImitationButton" class="w-full mt-1 control-button bg-yellow-600 hover:bg-yellow-700 button-font" disabled>Latih dari Rekaman</button>
-                 <div id="trainingProgress" class="text-xs text-yellow-300 h-4 mt-1 text-center"></div> <button id="runImitationButton" class="w-full mt-1 control-button bg-purple-600 hover:bg-purple-700 button-font" disabled>Jalankan AI Imitasi</button>
-                <button id="saveImitationModelButton" class="w-full mt-1 control-button bg-blue-600 hover:bg-blue-700 button-font" disabled>Simpan Model Imitasi</button>
-                <label for="loadImitationModelInput" class="file-label button-font mt-1" id="loadImitationModelLabel">Load Model Imitasi</label>
-                <input type="file" id="loadImitationModelInput" accept=".json"> <div class="ai-stat-label text-blue-300 mt-1">Status Imitasi:</div>
-                <div id="imitationStatus" class="font-mono text-gray-400 text-xs break-words">Belum ada</div>
-            </div> -->
-
+            <!-- Obstacle Controls -->
             <div class="space-y-1">
-                 <h3 class="ai-control-label text-teal-300 border-b border-gray-600 pb-1 mb-1">Rintangan</h3>
+                <!-- Changed Header and Labels -->
+                <h3 class="ai-control-label text-teal-300 border-b border-gray-600 pb-1 mb-1">Obstacles</h3>
                 <div class="flex items-center justify-between mb-1">
-                    <label class="obstacle-control-label block">Aktif:</label>
-                    <input type="checkbox" id="obstacleToggle" class="form-checkbox h-4 w-4 text-teal-500 bg-gray-600 border-gray-500 rounded focus:ring-teal-400 cursor-pointer">
+                    <label class="obstacle-control-label block">Enabled:</label>
+                    <input type="checkbox" id="obstacleToggle"
+                        class="form-checkbox h-4 w-4 text-teal-500 bg-gray-600 border-gray-500 rounded focus:ring-teal-400 cursor-pointer">
                 </div>
                 <div class="flex items-center space-x-1">
                     <label for="obstacleMinSpeedSlider" class="obstacle-control-label w-12">Min Spd:</label>
-                    <input type="range" id="obstacleMinSpeedSlider" min="0.5" max="5.0" value="1.8" step="0.1" class="flex-grow">
+                    <input type="range" id="obstacleMinSpeedSlider" min="0.5" max="5.0" value="1.8" step="0.1"
+                        class="flex-grow">
                     <span id="obstacleMinSpeedValue" class="control-value">1.8</span>
                 </div>
                 <div class="flex items-center space-x-1">
                     <label for="obstacleMaxSpeedSlider" class="obstacle-control-label w-12">Max Spd:</label>
-                    <input type="range" id="obstacleMaxSpeedSlider" min="1.0" max="10.0" value="5.5" step="0.1" class="flex-grow">
+                    <input type="range" id="obstacleMaxSpeedSlider" min="1.0" max="10.0" value="5.5" step="0.1"
+                        class="flex-grow">
                     <span id="obstacleMaxSpeedValue" class="control-value">5.5</span>
                 </div>
                 <div class="flex items-center space-x-1">
                     <label for="obstacleSpawnIntervalSlider" class="obstacle-control-label w-12">Freq:</label>
-                    <input type="range" id="obstacleSpawnIntervalSlider" min="10" max="150" value="50" step="5" class="flex-grow">
+                    <input type="range" id="obstacleSpawnIntervalSlider" min="10" max="150" value="50" step="5"
+                        class="flex-grow">
                     <span id="obstacleSpawnIntervalValue" class="control-value">50</span>
                 </div>
                 <div class="flex items-center space-x-1">
                     <label for="obstacleMinSizeSlider" class="obstacle-control-label w-12">Min Size:</label>
-                    <input type="range" id="obstacleMinSizeSlider" min="5" max="30" value="15" step="1" class="flex-grow">
+                    <input type="range" id="obstacleMinSizeSlider" min="5" max="30" value="15" step="1"
+                        class="flex-grow">
                     <span id="obstacleMinSizeValue" class="control-value">15</span>
                 </div>
                 <div class="flex items-center space-x-1">
                     <label for="obstacleMaxSizeSlider" class="obstacle-control-label w-12">Max Size:</label>
-                    <input type="range" id="obstacleMaxSizeSlider" min="10" max="50" value="40" step="1" class="flex-grow">
+                    <input type="range" id="obstacleMaxSizeSlider" min="10" max="50" value="40" step="1"
+                        class="flex-grow">
                     <span id="obstacleMaxSizeValue" class="control-value">40</span>
                 </div>
             </div>
-
         </div>
 
+        <!-- Network Modal -->
         <div id="networkModal" class="modal">
             <div class="modal-content">
-                <span class="modal-close" id="closeNetworkModal">&times;</span>
-                <h2 class="text-lg font-semibold mb-3 gameOverFont text-indigo-300">Struktur Jaringan AI NEAT</h2>
+                <span class="modal-close" id="closeNetworkModal">×</span>
+                <!-- Changed Modal Title -->
+                <h2 class="text-lg font-semibold mb-3 gameOverFont text-indigo-300">NEAT AI Network Structure</h2>
                 <pre id="networkJsonDisplay" class="modal-pre"></pre>
             </div>
         </div>
     </div>
 
+    <!-- Include JavaScript -->
     <script src="main.js"></script>
 </body>
 
