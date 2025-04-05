@@ -133,14 +133,16 @@ let targetSpawnCooldown = 0;  // Timer to control delay between target spawns
 let particles = [];           // Array holding active particle effect objects
 
 // --- New Target System: Fixed, Looping Spawn Points ---
-// Define 3 specific locations for targets to appear, relative to canvas size.
-// This makes the AI's task more predictable.
+// Define 3 specific locations for targets to appear, relative to canvas size,
+// in a sequential loop to make the AI's task more predictable.
+// (Tentukan 3 lokasi spesifik untuk target muncul, relatif terhadap ukuran kanvas,
+// dalam loop berurutan agar tugas AI lebih mudah diprediksi.)
 const HARDCODED_TARGET_SPAWN_POINTS = [
-    { xRatio: 0.3, yRatio: 0.2 }, // Left-Middle
-    { xRatio: 0.5, yRatio: 0.5 }, // Left-Middle
-    { xRatio: 0.4, yRatio: 0.6 }, // Left-Middle
+    { xRatio: 0.25, yRatio: 0.5 }, // 1. Left-Middle (Tengah-Kiri)
+    { xRatio: 0.5, yRatio: 0.25 }, // 2. Top-Middle (Atas-Tengah)
+    { xRatio: 0.75, yRatio: 0.5 }, // 3. Right-Middle (Tengah-Kanan)
 ];
-let currentTargetSpawnIndex = 0; // Index to track which hardcoded point is next
+let currentTargetSpawnIndex = 0; // Index to track which hardcoded point is next (Indeks untuk melacak titik mana berikutnya)
 
 // --- Audio Variables ---
 let audioCtx = null;                  // The Web Audio API context
@@ -222,7 +224,7 @@ let CONFIG = {
     // Target System
     targetSystemEnabled: true,
     targetSpawnIntervalSeconds: 0.5, // Time between target spawns (if previous is gone)
-    targetLifetimeSeconds: 30.0,  // How long a target stays before disappearing
+    targetLifetimeSeconds: 20.0,  // How long a target stays before disappearing
     targetSize: 160,             // **REVISED:** Diameter of the target (base value)
     targetColor: "#FFD700",       // Gold
     targetCompleteColor: "#00FF00", // Green
@@ -231,7 +233,7 @@ let CONFIG = {
     targetBloomSize: 30,        // Size of the target glow effect (base)
     targetHoverDistance: 50,    // Max distance from center to be considered hovering (base)
     targetCompletionScoreBonus: 250, // Score awarded for completing a target hover
-    hoverRegenRate: 40,         // Health/Energy regeneration rate (% per second) while hovering
+    hoverRegenRate: 100,         // Health/Energy regeneration rate (% per second) while hovering
     hoverCompletionMaxStatBonus: 5, // Percentage increase to max H/E after completing hover
 
     // Booster Mechanics
@@ -1234,8 +1236,9 @@ function spawnTargets() {
         return; // Don't spawn if disabled, game not visible, or target already exists
     }
 
-    // Use the next spawn point from the hardcoded list
-    const spawnRatio = HARDCODED_TARGET_SPAWN_POINTS[Math.floor(Math.random() * HARDCODED_TARGET_SPAWN_POINTS.length)];
+    // Use the *next sequential* spawn point from the hardcoded list
+    // (Gunakan titik spawn *berurutan berikutnya* dari daftar yang sudah ditentukan)
+    const spawnRatio = HARDCODED_TARGET_SPAWN_POINTS[currentTargetSpawnIndex];
 
     // Calculate absolute coordinates based on current canvas size
     const targetX = spawnRatio.xRatio * canvas.width;
