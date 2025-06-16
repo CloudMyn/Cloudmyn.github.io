@@ -1,85 +1,252 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
-  <meta charset="UTF-8">
-  <meta content="IE=edge" http-equiv="X-UA-Compatible">
-  <meta content="width=device-width,initial-scale=1" name="viewport">
-  <meta content="description" name="description">
-  <meta name="google" content="notranslate" />
-  <meta content="Mashup templates have been developped by Orson.io team" name="author">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV - Muhammad Abdi Natsir</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-  <!-- Disable tap highlight on IE -->
-  <meta name="msapplication-tap-highlight" content="no">
-  
-  <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-icon-180x180.png">
-  <link href="./assets/favicon.ico" rel="icon">
+    <style>
+        /*
+         * Sesuai permintaan Anda, semua style class menggunakan prefix 'cv-'.
+         * Desain ini mengadopsi gaya Neumorphism.
+         */
+        .cv-body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e0e5ec;
+            color: #374151; /* gray-700 */
+        }
 
-  <title>Portofolio - Muhammad Abdi</title>  
+        /* Style dasar untuk elemen Neumorphism yang 'menonjol' */
+        .cv-neumorphism-outset {
+            border-radius: 1rem; /* rounded-2xl */
+            background: #e0e5ec;
+            box-shadow: 7px 7px 15px #a3b1c6, -7px -7px 15px #ffffff;
+        }
 
-<link href="./main.3f6952e4.css" rel="stylesheet"></head>
+        /* Style untuk elemen Neumorphism yang 'tenggelam' (untuk input/button) */
+        .cv-neumorphism-inset {
+            border-radius: 0.75rem; /* rounded-xl */
+            background: #e0e5ec;
+            box-shadow: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff;
+        }
 
-<body class="minimal">
-<div id="site-border-left"></div>
-<div id="site-border-right"></div>
-<div id="site-border-top"></div>
-<div id="site-border-bottom"></div>
-<!-- Add your content of header -->
-<header>
-  <nav class="navbar  navbar-fixed-top navbar-inverse">
-    <div class="container">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
+        /* Style untuk tombol saat ditekan */
+        .cv-neumorphism-button:active {
+            box-shadow: inset 7px 7px 15px #a3b1c6, inset -7px -7px 15px #ffffff;
+        }
+        
+        /* Style untuk tombol saat proses loading */
+        .cv-neumorphism-button:disabled {
+            box-shadow: inset 5px 5px 10px #a3b1c6, inset -5px -5px 10px #ffffff;
+            cursor: not-allowed;
+            color: #6b7280; /* gray-500 */
+        }
+
+        /* Style untuk judul seksi */
+        .cv-section-title {
+            color: #1e3a8a; /* blue-900 */
+            border-bottom: 2px solid #dbeafe; /* blue-100 */
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700; /* bold */
+            font-size: 1.5rem; /* text-2xl */
+        }
+    </style>
+</head>
+
+<body class="cv-body p-4 sm:p-6 lg:p-8">
+
+    <div class="text-center mb-6">
+        <button id="cv-export-button" onclick="export_to_pdf()"
+                class="cv-neumorphism-outset cv-neumorphism-button font-bold py-3 px-6 text-blue-700 hover:text-blue-900 transition-all duration-300">
+            <i class="fas fa-file-pdf mr-2"></i>
+            Ekspor ke PDF
         </button>
-
-      <div class="collapse navbar-collapse" id="navbar-collapse">
-        <ul class="nav navbar-nav ">
-          <li><a href="./index.html" title="">01 : Home</a></li>
-          <li><a href="./works.html" title="">02 : Works</a></li>
-          <li><a href="./about.html" title="">03 : About me</a></li>
-          <li><a href="./contact.html" title="">04 : Contact</a></li>
-        </ul>
-
-
-      </div> 
     </div>
-  </nav>
-</header>
-<!-- Add your site or app content here -->
-  <div class="hero-full-container background-image-container white-text-container" style="background-image: url('./assets/images/space.jpg')">
-    <div class="container">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="hero-full-wrapper">
-            <div class="text-content">
-              <h1>Hello,<br>
-                <span id="typed-strings">
-                  <span>I'm Muhammad Abdi Natsir</span>
-                  <span>I'm a full-stack web and mobile developer</span>
-                  <span>Mainly focus on web development using laravel + livewire as main stack</span>
-                  <span>I'm also good at 3d modeling using blender</span>
-                  <span>And have a little knowledge about photoshop and figma</span>
-                </span>
-                <span id="typed"></span>
-              </h1>
+
+    <div id="cv-content" class="cv-neumorphism-outset max-w-5xl mx-auto overflow-hidden">
+        <div class="p-6 sm:p-8 md:p-12">
+            <header class="flex flex-col-reverse sm:flex-row items-center justify-between mb-10 text-center sm:text-left">
+                <div>
+                    <h1 class="text-4xl lg:text-5xl font-extrabold text-slate-800 tracking-tight mt-4 sm:mt-0">Muhammad Abdi Natsir</h1>
+                    <h2 class="text-lg lg:text-xl font-semibold text-blue-700 mt-1">Staf Administrasi & Web Developer</h2>
+                </div>
+                <div class="flex-shrink-0">
+                    <img src="/me.jpg"
+                         alt="[Potret Muhammad Abdi Natsir]"
+                         class="w-28 h-28 sm:w-32 sm:h-32 object-cover cv-neumorphism-outset p-1">
+                </div>
+            </header>
+
+            <div class="cv-neumorphism-inset p-4 mb-12">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4 text-sm text-slate-600">
+                      <a href="mailto:muhabdi47.com@gmail.com" class="flex items-center hover:text-blue-700 p-2 rounded-lg transition-colors">
+                          <i class="fa-solid fa-envelope w-6 text-center text-blue-600"></i><span class="ml-2">muhabdi47.com@gmail.com</span>
+                      </a>
+                      <a href="https://wa.me/6282191615474" target="_blank" class="flex items-center hover:text-blue-700 p-2 rounded-lg transition-colors">
+                          <i class="fa-brands fa-whatsapp w-6 text-center text-blue-600"></i><span class="ml-2">0821-9161-5474</span>
+                      </a>
+                      <a href="https://cloudmyn.github.io/" target="_blank" class="flex items-center hover:text-blue-700 p-2 rounded-lg transition-colors">
+                          <i class="fa-solid fa-globe w-6 text-center text-blue-600"></i><span class="ml-2">cloudmyn.github.io</span>
+                      </a>
+                      <div class="flex items-center p-2 rounded-lg">
+                          <i class="fa-solid fa-location-dot w-6 text-center text-blue-600"></i><span class="ml-2">Makassar, Indonesia</span>
+                      </div>
+                </div>
             </div>
-          </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                <div class="lg:col-span-2">
+                    <section class="mb-8">
+                        <h3 class="cv-section-title">Profil</h3>
+                        <p class="text-slate-600 leading-relaxed">
+                             Profesional yang adaptif dengan pengalaman solid sebagai Clerk, terampil dalam tugas-tugas administratif, manajemen data, dan pengarsipan. Di samping itu, memiliki hasrat dan kompetensi sebagai Web Developer dengan fokus pada ekosistem Laravel dan desain antarmuka yang responsif. Kombinasi keahlian ini memungkinkan saya untuk tidak hanya memastikan operasional kantor berjalan efisien, tetapi juga untuk berkontribusi pada proyek digital dan pengembangan aset web perusahaan.
+                        </p>
+                    </section>
+                    
+                    <section>
+                        <h3 class="cv-section-title">Pengalaman Kerja</h3>
+                        <article class="p-4 cv-neumorphism-outset">
+                            <div class="flex justify-between items-baseline">
+                                <h4 class="text-lg font-semibold text-slate-800">Clerk</h4>
+                                <p class="text-sm font-medium text-blue-700">Jan 2023 - Agu 2024</p>
+                            </div>
+                            <p class="text-md font-medium text-slate-500 mb-2">PT. Indomarco Prismatama - Manado</p>
+                            <ul class="list-disc list-outside ml-5 text-slate-600 space-y-1">
+                                <li>Mengelola tugas-tugas administratif dan memastikan akurasi data.</li>
+                                <li>Menyusun dan mengelola dokumen penting untuk operasional harian.</li>
+                                <li>Berkolaborasi dengan tim untuk mendukung efisiensi alur kerja kantor.</li>
+                            </ul>
+                        </article>
+                    </section>
+                </div>
+
+                <div class="lg:col-span-1">
+                    <section class="mb-8">
+                        <h3 class="cv-section-title">Keahlian</h3>
+                        
+                        <div class="mb-6">
+                            <h4 class="font-semibold text-slate-700 mb-3">Administrasi & Perangkat Lunak</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="cv-neumorphism-outset text-sm font-medium px-3 py-1">MS Excel</span>
+                                <span class="cv-neumorphism-outset text-sm font-medium px-3 py-1">MS Word</span>
+                                <span class="cv-neumorphism-outset text-sm font-medium px-3 py-1">PowerPoint</span>
+                                <span class="cv-neumorphism-outset text-sm font-medium px-3 py-1">SPSS</span>
+                                <span class="cv-neumorphism-outset text-sm font-medium px-3 py-1">Photoshop</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="font-semibold text-slate-700 mb-3">Pengembangan Web & Desain</h4>
+                             <div class="flex flex-wrap gap-2">
+                                <span class="cv-neumorphism-outset text-sm font-medium px-3 py-1 text-blue-700">HTML5</span>
+                                <span class="cv-neumorphism-outset text-sm font-medium px-3 py-1 text-blue-700">CSS3</span>
+                                <span class="cv-neumorphism-outset text-sm font-medium px-3 py-1">JavaScript</span>
+                                <span class="cv-neumorphism-outset text-sm font-medium px-3 py-1">PHP</span>
+                                <span class="cv-neumorphism-outset text-sm font-medium px-3 py-1">Laravel</span>
+                                <span class="cv-neumorphism-outset text-sm font-medium px-3 py-1">Livewire</span>
+                                <span class="cv-neumorphism-outset text-sm font-medium px-3 py-1">Bootstrap</span>
+                                <span class="cv-neumorphism-outset text-sm font-medium px-3 py-1">Flutter</span>
+                                <span class="cv-neumorphism-outset text-sm font-medium px-3 py-1">Blender</span>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <section>
+                         <h3 class="cv-section-title">Pendidikan Terahkir</h3>
+                         <div class="p-4 cv-neumorphism-outset">
+                            <article class="mb-3">
+                                <h4 class="font-semibold text-slate-700">MA MDIA Bontoala</h4>
+                                <p class="text-sm font-medium text-slate-500">Jurusan IPA (2016 - 2018)</p>
+                            </article>
+                         </div>
+                    </section>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function (event) {
-     type();
-     movingBackgroundImage();
-  });
-</script>
+    <script>
+        /**
+         * Fungsi untuk mengambil konten dari 'simple.html' dan mengekspornya ke PDF.
+         * Fungsi ini memuat HTML, mengekstrak konten dan gayanya, lalu menggunakan html2pdf.js
+         * untuk membuat file PDF.
+         * @returns {Promise<void>} - Fungsi ini berjalan secara asynchronous.
+         */
+        async function export_to_pdf() {
+            const exportButton = document.getElementById('cv-export-button');
+            const originalButtonContent = exportButton.innerHTML;
 
+            // Nonaktifkan tombol dan tampilkan status loading
+            exportButton.disabled = true;
+            exportButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Mengekspor...';
 
-<script type="text/javascript" src="./main.70a66962.js"></script></body>
+            try {
+                // 1. Ambil konten HTML dari file 'simple.html'
+                const response = await fetch('simple.html');
+                if (!response.ok) {
+                    throw new Error(`Gagal memuat simple.html. Status: ${response.status}`);
+                }
+                const htmlText = await response.text();
+
+                // 2. Gunakan DOMParser untuk mengubah teks HTML menjadi dokumen yang bisa dimanipulasi
+                const parser = new DOMParser();
+                const simpleDoc = parser.parseFromString(htmlText, 'text/html');
+                
+                // Ambil elemen konten utama dan style dari simple.html
+                const contentToPrint = simpleDoc.querySelector('.cv-container');
+                const stylesToPrint = simpleDoc.querySelector('style').innerText;
+
+                if (!contentToPrint) {
+                    throw new Error('Elemen .cv-container tidak ditemukan di dalam simple.html');
+                }
+
+                // 3. Buat elemen sementara untuk menampung konten dan style
+                const tempPrintArea = document.createElement('div');
+                tempPrintArea.id = 'temp-print-area';
+                tempPrintArea.innerHTML = contentToPrint.outerHTML;
+
+                const tempStyle = document.createElement('style');
+                tempStyle.id = 'temp-print-style';
+                tempStyle.innerText = stylesToPrint;
+                
+                // Tambahkan elemen dan style sementara ke dokumen utama agar bisa di-render oleh html2pdf
+                document.head.appendChild(tempStyle);
+                document.body.appendChild(tempPrintArea);
+
+                // 4. Konfigurasi dan buat PDF dari elemen yang sudah disiapkan
+                const elementForPdf = tempPrintArea.querySelector('.cv-container');
+                const opt = {
+                    margin:       0,
+                    filename:     'CV-Muhammad-Abdi-Natsir.pdf',
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true },
+                    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+                };
+
+                await html2pdf().set(opt).from(elementForPdf).save();
+
+            } catch (error) {
+                console.error('Gagal mengekspor PDF:', error);
+                alert(`Terjadi kesalahan saat membuat PDF: ${error.message}`);
+            } finally {
+                // 5. Hapus elemen dan style sementara setelah selesai
+                document.getElementById('temp-print-area')?.remove();
+                document.getElementById('temp-print-style')?.remove();
+
+                // Kembalikan tombol ke keadaan semula
+                exportButton.disabled = false;
+                exportButton.innerHTML = originalButtonContent;
+            }
+        }
+    </script>
+</body>
 
 </html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Simple - Muhammad Abdi Natsir</title>
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /*
+         * Prefix 'cv-' digunakan untuk semua class agar tidak tumpang tindih dengan style lain.
+         * Desain ini dibuat minimalis untuk kemudahan ekspor dan keterbacaan.
+        */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .cv-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2.5rem;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .cv-header {
+            text-align: center;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cv-header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .cv-header h2 {
+            margin: 0.25rem 0 0 0;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #3498db;
+        }
+
+        .cv-contact-info {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem 2rem;
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .cv-contact-info span {
+            display: inline-block;
+        }
+
+        .cv-section {
+            margin-bottom: 2rem;
+        }
+
+        .cv-section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cv-work-item h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .cv-work-item .cv-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+
+        .cv-work-item ul {
+            padding-left: 1.25rem;
+            margin: 0;
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .cv-skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        .cv-skills-list li {
+            background-color: #eaf2f8;
+            color: #2980b9;
+            padding: 0.3rem 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .cv-education h3 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .cv-education p {
+            margin: 0;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .cv-export-button-container {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .cv-export-button {
+            font-family: 'Poppins', sans-serif;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .cv-export-button:hover {
+            background-color: #2980b9;
+        }
+
+        @media print {
+            body {
+                background-color: #fff;
+                margin: 0;
+                padding: 0;
+            }
+
+            .cv-container {
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                padding: 1rem;
+            }
+
+            .cv-export-button-container {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="cv-content" class="cv-container">
+        <!-- Header -->
+        <header class="cv-header">
+            <h1>Muhammad Abdi Natsir</h1>
+            <h2>Staf Administrasi & Web Developer</h2>
+        </header>
+
+        <!-- Informasi Kontak -->
+        <div class="cv-contact-info">
+            <span>&#9993; muhabdi47.com@gmail.com</span>
+            <span>&#9742; 0821-9161-5474</span>
+            <span>&#127968; Makassar, Indonesia</span>
+        </div>
+
+        <!-- Profil -->
+        <section class="cv-section">
+            <h2 class="cv-section-title">Profil</h2>
+            <p>
+                Profesional yang adaptif dengan pengalaman solid sebagai Clerk, terampil dalam tugas-tugas
+                administratif, manajemen data, dan pengarsipan. Di samping itu, memiliki hasrat dan kompetensi sebagai
+                Web Developer dengan fokus pada ekosistem Laravel dan desain antarmuka yang responsif. Kombinasi
+                keahlian ini memungkinkan saya untuk tidak hanya memastikan operasional kantor berjalan efisien, tetapi
+                juga untuk berkontribusi pada proyek digital dan pengembangan aset web perusahaan.
+            </p>
+        </section>
+
+        <!-- Pengalaman Kerja -->
+        <section class="cv-section">
+            <h2 class="cv-section-title">Pengalaman Kerja</h2>
+            <div class="cv-work-item">
+                <div class="cv-details">
+                    <h3>Clerk</h3>
+                    <span>Jan 2023 - Agu 2024</span>
+                </div>
+                <p style="font-style: italic; margin-bottom: 0.5rem;">PT. Indomarco Prismatama - Manado</p>
+                <ul>
+                    <li>Mengelola tugas-tugas administratif dan memastikan akurasi data.</li>
+                    <li>Menyusun dan mengelola dokumen penting untuk operasional harian.</li>
+                    <li>Berkolaborasi dengan tim untuk mendukung efisiensi alur kerja kantor.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Keahlian -->
+        <section class="cv-section">
+            <h2 class="cv-section-title">Keahlian</h2>
+            <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;">Administrasi & Perangkat Lunak</h3>
+            <ul class="cv-skills-list" style="margin-bottom: 1rem;">
+                <li>MS Excel</li>
+                <li>MS Word</li>
+                <li>PowerPoint</li>
+                <li>SPSS</li>
+                <li>Photoshop</li>
+            </ul>
+            <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem;">Pengembangan Web & Desain</h3>
+            <ul class="cv-skills-list">
+                <li>Laravel</li>
+                <li>Filament</li>
+                <li>Livewire</li>
+                <li>Bootstrap</li>
+                <li>HTML & CSS</li>
+            </ul>
+        </section>
+
+        <!-- Pendidikan -->
+        <section class="cv-section cv-education">
+            <h2 class="cv-section-title">Pendidikan Terakhir</h2>
+            <h3>MA MDIA Bontoala</h3>
+            <p>Jurusan IPA (2016 - 2018)</p>
+        </section>
+    </div>
+
+</body>
+
+</html>
